@@ -19,7 +19,7 @@ import backend.Service.Impl.StudyGroupImpl;
 import backend.dbms.models.Status;
 import backend.dbms.models.User;
 import backend.dbms.repository.StudyGroupDao;
-import backend.dbms.repository.UserRepository;
+import backend.dbms.repository.UserDao;
 import backend.dbms.security.jwt.JwtUtils;
 
 @RestController
@@ -31,7 +31,7 @@ public class StudyGroupController {
     private StudyGroupImpl groupImpl;
 
     @Autowired
-    private UserRepository userRepository;
+    private UserDao userRepository;
 
     @Autowired
     private JwtUtils jwtUtils;

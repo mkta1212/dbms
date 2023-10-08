@@ -20,6 +20,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import backend.Service.Impl.RoleImpl;
+import backend.Service.Impl.UserImpl;
 import backend.dbms.models.ERole;
 import backend.dbms.models.Role;
 import backend.dbms.models.User;
@@ -27,8 +29,8 @@ import backend.dbms.payload.request.LoginRequest;
 import backend.dbms.payload.request.SignupRequest;
 import backend.dbms.payload.response.JwtResponse;
 import backend.dbms.payload.response.MessageResponse;
-import backend.dbms.repository.RoleRepository;
-import backend.dbms.repository.UserRepository;
+import backend.dbms.repository.RoleDao;
+import backend.dbms.repository.UserDao;
 import backend.dbms.security.jwt.JwtUtils;
 import backend.dbms.security.services.UserDetailsImpl;
 
@@ -40,10 +42,10 @@ public class AuthController {
   AuthenticationManager authenticationManager;
 
   @Autowired
-  UserRepository userRepository;
+  UserImpl userImpl;
 
   @Autowired
-  RoleRepository roleRepository;
+  RoleImpl roleImpl;
 
   @Autowired
   PasswordEncoder encoder;
@@ -75,13 +77,13 @@ public class AuthController {
   @PostMapping("/signup")
   public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signUpRequest) {
     System.err.println("register");
-    if (userRepository.existsByUsername(signUpRequest.getUsername())) {
+    if (userImpl.existsByUsername(signUpRequest.getUsername())) {
       return ResponseEntity
           .badRequest()
           .body(new MessageResponse("Error: Username is already taken!"));
     }
 
-    if (userRepository.existsByEmail(signUpRequest.getEmail())) {
+    if (userImpl.existsByEmail(signUpRequest.getEmail())) {
       return ResponseEntity
           .badRequest()
           .body(new MessageResponse("Error: Email is already in use!"));
@@ -96,26 +98,26 @@ public class AuthController {
     Set<Role> roles = new HashSet<>();
 
     if (strRoles == null) {
-      Role userRole = roleRepository.findByName(ERole.ROLE_USER)
+      Role userRole = roleImpl.getByName(ERole.ROLE_USER)
           .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
       roles.add(userRole);
     } else {
       strRoles.forEach(role -> {
         switch (role) {
         case "admin":
-          Role adminRole = roleRepository.findByName(ERole.ROLE_ADMIN)
+          Role adminRole = roleImpl.getByName(ERole.ROLE_ADMIN)
               .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
           roles.add(adminRole);
 
           break;
         case "mod":
-          Role modRole = roleRepository.findByName(ERole.ROLE_MODERATOR)
+          Role modRole = roleImpl.getByName(ERole.ROLE_MODERATOR)
               .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
           roles.add(modRole);
 
           break;
         default:
-          Role userRole = roleRepository.findByName(ERole.ROLE_USER)
+          Role userRole = roleImpl.getByName(ERole.ROLE_USER)
               .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
           roles.add(userRole);
         }
@@ -123,7 +125,7 @@ public class AuthController {
     }
 
     user.setRoles(roles);
-    userRepository.save(user);
+    userImpl.createUser(user);
 
     return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
   }

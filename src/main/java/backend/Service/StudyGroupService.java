@@ -1,6 +1,7 @@
 package backend.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 import backend.dbms.models.Status;
 import backend.dbms.models.StudyGroup;
@@ -11,5 +12,5 @@ public interface StudyGroupService {
     List<StudyGroup> getAllGroups();
     List<StudyGroup> getByHolder(User user);
     void createGroup(StudyGroup group);
-    StudyGroup getByGroupId(Long id);
+    Optional<StudyGroup> getByGroupId(Long id);
 }

@@ -9,6 +9,7 @@ import backend.dbms.models.ERole;
 import backend.dbms.models.Role;
 
 @Repository
-public interface RoleRepository extends JpaRepository<Role, Long> {
+public interface RoleDao extends JpaRepository<Role, Long> {
+  
   Optional<Role> findByName(ERole name);
 }

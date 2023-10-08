@@ -17,13 +17,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import backend.dbms.models.StudyGroup;
+import backend.Service.Impl.ParticipationImpl;
 import backend.Service.Impl.StudyGroupImpl;
+import backend.Service.Impl.UserImpl;
 import backend.dbms.models.Participantion;
 import backend.dbms.models.Status;
 import backend.dbms.models.User;
 import backend.dbms.repository.StudyGroupDao;
-import backend.dbms.repository.ParticipantionRepository;
-import backend.dbms.repository.UserRepository;
+import backend.dbms.repository.ParticipantionDao;
+import backend.dbms.repository.UserDao;
 import backend.dbms.security.jwt.JwtUtils;
 import jakarta.transaction.Transactional;
 
@@ -36,31 +38,31 @@ public class ParticipantController {
     private JwtUtils jwtUtils;
 
     @Autowired
-    private UserRepository userRepository;
+    private UserImpl userImpl;
 
     @Autowired
     private StudyGroupImpl groupImpl;
 
     @Autowired
-    private ParticipantionRepository participantionRepository;
+    private ParticipationImpl participationImpl;
 
     @PostMapping("/joins")
     @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
-    public Participantion createParticipant(@RequestHeader("Authorization") String token,@RequestBody StudyGroup group){
+    public void createParticipant(@RequestHeader("Authorization") String token,@RequestBody StudyGroup group){
         String userName = jwtUtils.getUserNameFromJwtToken(token.substring(7, token.length()));
-        User user = userRepository.findByUsername(userName).get();
-        group = groupImpl.getByGroupId(group.getGroupId());
+        User user = userImpl.getByUsername(userName).get();
+        group = groupImpl.getByGroupId(group.getGroupId()).get();
         Date date = new Date();
         Participantion participantion = new Participantion(user,group,date);
-        return participantionRepository.save(participantion);
+        participationImpl.createParticipation(participantion);
     }
 
     @GetMapping("/joins")
     @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
     public List<Participantion> findMyParticipation(@RequestHeader("Authorization") String token){
         String userName = jwtUtils.getUserNameFromJwtToken(token.substring(7, token.length()));
-        User user = userRepository.findByUsername(userName).get();
-        return participantionRepository.findByUser(user);
+        User user = userImpl.getByUsername(userName).get();
+        return participationImpl.getByUser(user);
     }
 
     @DeleteMapping("/joins")
@@ -68,18 +70,18 @@ public class ParticipantController {
     @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
     public void deleParticipant(@RequestHeader("Authorization") String token,@RequestBody StudyGroup group){
         String userName = jwtUtils.getUserNameFromJwtToken(token.substring(7, token.length()));
-        User user = userRepository.findByUsername(userName).get();
-        group = groupImpl.getByGroupId(group.getGroupId());
+        User user = userImpl.getByUsername(userName).get();
+        group = groupImpl.getByGroupId(group.getGroupId()).get();
         System.err.println(group.toString());
-        participantionRepository.deleteByUserAndGroup(user, group);
+        participationImpl.deleteByUserAndGroup(user, group);
     }
 
     @PostMapping("/participantAmounts")
     @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
     public Long getParticipantAmount(@RequestBody StudyGroup group){
-        group = groupImpl.getByGroupId(group.getGroupId());
-        System.err.println(participantionRepository.countByGroup(group));
-        return participantionRepository.countByGroup(group);
+        group = groupImpl.getByGroupId(group.getGroupId()).get();
+        System.err.println(participationImpl.countByGroup(group));
+        return participationImpl.countByGroup(group);
     }
 
 

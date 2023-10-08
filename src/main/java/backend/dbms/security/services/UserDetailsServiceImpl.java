@@ -8,12 +8,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import backend.dbms.models.User;
-import backend.dbms.repository.UserRepository;
+import backend.dbms.repository.UserDao;
 
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService {
   @Autowired
-  UserRepository userRepository;
+  UserDao userRepository;
 
   @Override
   @Transactional

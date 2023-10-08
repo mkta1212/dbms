@@ -37,14 +37,15 @@ public class Participantion {
     private StudyGroup group;
     
     @NonNull
-    private Date date;
+    @Column(name = "join_time")
+    private Date joinTime;
 
     // private String feedback;
 
-    public Participantion(User user, StudyGroup group, Date date) {
+    public Participantion(User user, StudyGroup group, Date joinTime) {
         this.user = user;
         this.group  = group;
-        this.date = date;
+        this.joinTime = joinTime;
     }
     public StudyGroup getGroup(){
         return group;

@@ -17,9 +17,9 @@ import backend.dbms.models.Role;
 import backend.dbms.models.Status;
 import backend.dbms.models.User;
 import backend.dbms.repository.StudyGroupDao;
-import backend.dbms.repository.RoleRepository;
-import backend.dbms.repository.UserRepository;
-import backend.dbms.repository.ParticipantionRepository;
+import backend.dbms.repository.RoleDao;
+import backend.dbms.repository.UserDao;
+import backend.dbms.repository.ParticipantionDao;
 
 @Component
 public class DataLoader implements CommandLineRunner {
@@ -28,16 +28,16 @@ public class DataLoader implements CommandLineRunner {
     private StudyGroupDao eventRepository;
 
     @Autowired
-    private UserRepository userRepository;
+    private UserDao userRepository;
 
     @Autowired
-    private RoleRepository roleRepository;
+    private RoleDao roleRepository;
 
     @Autowired
     private PasswordEncoder encoder;
 
     @Autowired
-    private ParticipantionRepository ParticipantionRepository;
+    private ParticipantionDao ParticipantionRepository;
 
     @Override
     public void run(String... args) throws Exception {

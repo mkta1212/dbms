@@ -34,8 +34,9 @@ public class StudyGroup {
     private Long groupId;
     
 
-    @NotBlank
     @NonNull
+    @Enumerated(EnumType.STRING)
+    @Column(length = 20)
     private Status status;
 
 
@@ -49,7 +50,8 @@ public class StudyGroup {
 
     
     @NonNull
-    private int user_max;
+    @Column(name = "user_max")
+    private int userMax;
 
     // @OneToMany
     // private Set<Participant> participantList = new HashSet<>();
@@ -66,9 +68,9 @@ public class StudyGroup {
     // public void addParticipant(Participant participant){
     //     participantList.add(participant);
     // }
-    public StudyGroup(Date date,  int user_max, String content){
+    public StudyGroup(Date date,  int userMax, String content){
         this.date = date;
-        this.user_max = user_max;
+        this.userMax = userMax;
         this.content = content;
         
     }

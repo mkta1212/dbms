@@ -11,7 +11,7 @@ import backend.dbms.models.Participantion;
 import backend.dbms.models.User;
 
 @Repository
-public interface ParticipantionRepository extends JpaRepository<Participantion, Long> {
+public interface ParticipantionDao extends JpaRepository<Participantion, Long> {
   List<Participantion> findByUser(User user);
   void deleteByUserAndGroup(User user, StudyGroup group);
   long countByGroup(StudyGroup group);

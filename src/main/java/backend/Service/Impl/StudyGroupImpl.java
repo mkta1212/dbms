@@ -1,6 +1,7 @@
 package backend.Service.Impl;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -35,7 +36,7 @@ public class StudyGroupImpl implements StudyGroupService {
     }
 
     @Override
-    public StudyGroup getByGroupId(Long id){
-        return groupDao.findById(id).get();
+    public Optional<StudyGroup> getByGroupId(Long id){
+        return groupDao.findById(id);
     }
 }

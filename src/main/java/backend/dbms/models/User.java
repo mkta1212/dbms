@@ -24,6 +24,7 @@ public class User {
 
   @NotBlank
   @Size(max = 20)
+  @Column(name = "user_name")
   private String username;
 
   @NotBlank
@@ -32,7 +33,7 @@ public class User {
   private String email;
 
   @NotBlank
-  @Size(max = 120)
+  @Size(max = 15)
   private String password;
 
   @ManyToMany(fetch = FetchType.LAZY)
@@ -47,7 +48,7 @@ public class User {
   @JsonManagedReference
   @OneToMany(mappedBy = "holder")
   // @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
-  private List<Event> hold;
+  private List<StudyGroup> hold;
 
   public User() {
   }
