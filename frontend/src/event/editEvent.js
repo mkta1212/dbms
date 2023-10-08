@@ -12,7 +12,7 @@ class EditEvent extends Component {
     this.state = {}
   }
 
-  componentDidMount () {
+  componentDidMount () {  
     axios.get('http://localhost:8080/api/events/id', { headers: authHeader() })
     .then((data) => { return data.data })
 

@@ -7,6 +7,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -15,14 +16,16 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import backend.dbms.models.Event;
-import backend.dbms.models.Participant;
+import backend.dbms.models.StudyGroup;
+import backend.Service.Impl.StudyGroupImpl;
+import backend.dbms.models.Participantion;
 import backend.dbms.models.Status;
 import backend.dbms.models.User;
-import backend.dbms.repository.EventRepository;
-import backend.dbms.repository.ParticipantRepository;
+import backend.dbms.repository.StudyGroupDao;
+import backend.dbms.repository.ParticipantionRepository;
 import backend.dbms.repository.UserRepository;
 import backend.dbms.security.jwt.JwtUtils;
+import jakarta.transaction.Transactional;
 
 @RestController
 @RequestMapping("/api")
@@ -36,28 +39,47 @@ public class ParticipantController {
     private UserRepository userRepository;
 
     @Autowired
-    private EventRepository eventRepository;
+    private StudyGroupImpl groupImpl;
 
     @Autowired
-    private ParticipantRepository participantRepository;
+    private ParticipantionRepository participantionRepository;
 
     @PostMapping("/joins")
     @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
-    public Participant createEvent(@RequestHeader("Authorization") String token,@RequestBody Event event){
+    public Participantion createParticipant(@RequestHeader("Authorization") String token,@RequestBody StudyGroup group){
         String userName = jwtUtils.getUserNameFromJwtToken(token.substring(7, token.length()));
         User user = userRepository.findByUsername(userName).get();
-        // Event event = eventRepository.findById(id).get();
+        group = groupImpl.getByGroupId(group.getGroupId());
         Date date = new Date();
-        Participant participant = new Participant(user,event,date);
-        return participantRepository.save(participant);
+        Participantion participantion = new Participantion(user,group,date);
+        return participantionRepository.save(participantion);
     }
 
     @GetMapping("/joins")
     @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
-    public List<Participant> findMyParticipation(@RequestHeader("Authorization") String token){
+    public List<Participantion> findMyParticipation(@RequestHeader("Authorization") String token){
         String userName = jwtUtils.getUserNameFromJwtToken(token.substring(7, token.length()));
         User user = userRepository.findByUsername(userName).get();
-        return participantRepository.findByUser(user);
+        return participantionRepository.findByUser(user);
+    }
+
+    @DeleteMapping("/joins")
+    @Transactional
+    @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
+    public void deleParticipant(@RequestHeader("Authorization") String token,@RequestBody StudyGroup group){
+        String userName = jwtUtils.getUserNameFromJwtToken(token.substring(7, token.length()));
+        User user = userRepository.findByUsername(userName).get();
+        group = groupImpl.getByGroupId(group.getGroupId());
+        System.err.println(group.toString());
+        participantionRepository.deleteByUserAndGroup(user, group);
+    }
+
+    @PostMapping("/participantAmounts")
+    @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
+    public Long getParticipantAmount(@RequestBody StudyGroup group){
+        group = groupImpl.getByGroupId(group.getGroupId());
+        System.err.println(participantionRepository.countByGroup(group));
+        return participantionRepository.countByGroup(group);
     }
 
 

@@ -23,7 +23,6 @@ function Row (props) {
   // 設定使用者下拉式選單開闔
   const [open, setOpen] = useState(false)
 
-
   return (
     <>
       <TableRow sx={{ borderBottom: 1 }} id={'eventId' + row.eventId}>
@@ -41,6 +40,7 @@ function Row (props) {
         
         <TableCell align='right'>{row.eventLocation}</TableCell>
         <TableCell align='right'>{row.max}</TableCell>
+        <TableCell align='right'>{row.amount}</TableCell>
       </TableRow>
       <TableRow>
         <TableCell style={{ paddingBottom: 1, paddingTop: 0, margin: 2 }} colSpan={6}>
@@ -76,9 +76,15 @@ async function SearchEvent () {
   return await axios.get('http://localhost:8080/api/myevents', { headers: authHeader() })
     .then((data) => { return data.data })
 }
+async function SearchEventAmount (id) {
+  console.log(id)
+  return await axios.post('http://localhost:8080/api/participantAmounts',{id}, { headers: authHeader()})
+    .then((data) => { return data.data })
+}
 
 async function formEvent (event) {
   var eventDate;
+  var amount = await SearchEventAmount(event.id)
   if (event.date.includes("T")){
     eventDate = event.date.split("T")[0]+" "+event.date.split("T")[1].split(".")[0]
   
@@ -94,6 +100,7 @@ async function formEvent (event) {
     eventStatus: event.eventStatus,
     max: event.max,
     content: event.content,
+    amount: amount,
   }
 }
 
@@ -151,6 +158,7 @@ export default function MyEvents () {
               <TableCell align='right'>活動時間</TableCell>
               <TableCell align='right'>活動地點</TableCell>
               <TableCell align='right'>活動人數上限</TableCell>
+              <TableCell align='right'>目前活動人數</TableCell>
               {/* <TableCell align='right' /> */}
             </TableRow>
           </TableHead>

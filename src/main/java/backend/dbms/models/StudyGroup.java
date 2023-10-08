@@ -27,25 +27,17 @@ import lombok.Setter;
 @Setter
 @Entity
 @Data
-@Table(name = "event")
-public class Event {
+@Table(name = "study_group")
+public class StudyGroup {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long groupId;
     
-    @NotBlank
-    @Size(max = 50)
-    @NonNull
-    private String eventName;
 
     @NotBlank
     @NonNull
-    private Status eventStatus;
+    private Status status;
 
-    @NotBlank
-    @Size(max = 50)
-    @NonNull
-    private String location;
 
     @NotBlank
     @Size(max = 100)
@@ -57,7 +49,7 @@ public class Event {
 
     
     @NonNull
-    private int max;
+    private int user_max;
 
     // @OneToMany
     // private Set<Participant> participantList = new HashSet<>();
@@ -74,11 +66,9 @@ public class Event {
     // public void addParticipant(Participant participant){
     //     participantList.add(participant);
     // }
-    public Event(String eventName,Date date, String location, int max, String content){
-        this.eventName = eventName;
+    public StudyGroup(Date date,  int user_max, String content){
         this.date = date;
-        this.location = location;
-        this.max = max;
+        this.user_max = user_max;
         this.content = content;
         
     }

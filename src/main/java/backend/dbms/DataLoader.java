@@ -11,21 +11,21 @@ import org.springframework.stereotype.Component;
 
 import backend.dbms.models.ERole;
 import backend.dbms.models.Event;
-import backend.dbms.models.Participant;
+import backend.dbms.models.Participantion;
 // import backend.dbms.models.ParticipantId;
 import backend.dbms.models.Role;
 import backend.dbms.models.Status;
 import backend.dbms.models.User;
-import backend.dbms.repository.EventRepository;
+import backend.dbms.repository.StudyGroupDao;
 import backend.dbms.repository.RoleRepository;
 import backend.dbms.repository.UserRepository;
-import backend.dbms.repository.ParticipantRepository;
+import backend.dbms.repository.ParticipantionRepository;
 
 @Component
 public class DataLoader implements CommandLineRunner {
 
     @Autowired
-    private EventRepository eventRepository;
+    private StudyGroupDao eventRepository;
 
     @Autowired
     private UserRepository userRepository;
@@ -37,7 +37,7 @@ public class DataLoader implements CommandLineRunner {
     private PasswordEncoder encoder;
 
     @Autowired
-    private ParticipantRepository ParticipantRepository;
+    private ParticipantionRepository ParticipantionRepository;
 
     @Override
     public void run(String... args) throws Exception {
@@ -57,21 +57,29 @@ public class DataLoader implements CommandLineRunner {
             role1.add(modRole);
             user1.setRoles(role1);
             userRepository.save(user1);
-            Date date1=new SimpleDateFormat("dd/MM/yyyy").parse("31/12/2023");  
+            Date date1 = new SimpleDateFormat("dd/MM/yyyy").parse("31/12/2023");  
             Event event1 = new Event("打麻將", Status.In_Progress, "館二", "30/10",date1,100,user1);
             eventRepository.save(event1);
-            Date date2=new SimpleDateFormat("dd/MM/yyyy").parse("31/10/2023");  
+            Date date2 = new SimpleDateFormat("dd/MM/yyyy").parse("31/10/2023");  
             Event event2 = new Event("打桌遊", Status.In_Progress, "教研320", "農家樂",date2,100,user1);
             eventRepository.save(event2);
+
 
             User user2 = new User("123456789", "123456789@gmail.com", encoder.encode("123456789"));
             user2.setRoles(role1);
             userRepository.save(user2);
+            Date date3 = new  SimpleDateFormat("dd/MM/yyyy").parse("31/8/2023");  
+            Event event3 = new Event("打桌遊", Status.Finished, "教研320", "農家樂",date3,100,user2);
+            eventRepository.save(event3);
+            
             Date date = new Date();
-            Participant participant11 = new Participant(user2, event1, date);
-            ParticipantRepository.save(participant11);
-            eventRepository.save(event1);
-            userRepository.save(user2);
+            Participantion participant11 = new Participantion(user2, event1, date);
+            ParticipantionRepository.save(participant11);
+            Date date4 = new  SimpleDateFormat("dd/MM/yyyy").parse("31/7/2023");
+            Participantion participant13 = new Participantion(user1, event3, date4);
+            ParticipantionRepository.save(participant13);
+            
+
         }
         
     }

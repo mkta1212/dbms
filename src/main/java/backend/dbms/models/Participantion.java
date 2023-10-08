@@ -10,13 +10,11 @@ import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 
 @Entity
-@Table(name = "participant")
-// @IdClass(ParticipantId.class)
-// @NoArgsConstructor
+@Table(name = "participantion")
 @AllArgsConstructor
 @RequiredArgsConstructor
 @Data
-public class Participant {
+public class Participantion {
      
     
 
@@ -34,19 +32,21 @@ public class Participant {
     
     // @ManyToOne(cascade = {CascadeType.PERSIST,CascadeType.MERGE})
     @ManyToOne
-    @JoinColumn(name = "event_id")
+    @JoinColumn(name = "group_id")
     @NonNull
-    private Event event;
+    private StudyGroup group;
     
     @NonNull
     private Date date;
 
-    public Participant(User user, Event event, Date date) {
+    // private String feedback;
+
+    public Participantion(User user, StudyGroup group, Date date) {
         this.user = user;
-        this.event  = event;
+        this.group  = group;
         this.date = date;
     }
-    public Event getEvent(){
-        return event;
+    public StudyGroup getGroup(){
+        return group;
     }
 }

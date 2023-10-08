@@ -22,7 +22,28 @@ function Row (props) {
   const { row } = props
   // 設定使用者下拉式選單開闔
   const [open, setOpen] = useState(false)
+  const btn =(eventStatus)=>{
+    if (eventStatus==="In_Progress"){
+      return (<Button onClick={() => { deleteParticipant(row.eventId) }}>取消活動</Button>)
+    }
+  }
+  // function FeedbackArea(status){
+  //   const {eventStatus} = status
+  //   if (eventStatus==="Finished"){
+  //     return (
+  //       <>
+  //     <Typography variant='h6' gutterBottom component='div'>
+  //                 活動回饋
 
+  //       </Typography>
+  //     <TextField 
+  //       multiline
+  //       fullWidth 
+  //       />
+       
+  //       </>)
+  //   }
+  // }
 
   return (
     <>
@@ -42,6 +63,7 @@ function Row (props) {
         <TableCell align='right'>{row.eventLocation}</TableCell>
         <TableCell align='right'>{row.max}</TableCell>
         <TableCell align='right'>{row.joinDate}</TableCell>
+        <TableCell align='right'>{btn(row.eventStatus)}</TableCell>
       </TableRow>
       <TableRow>
         <TableCell style={{ paddingBottom: 1, paddingTop: 0, margin: 2 }} colSpan={6}>
@@ -60,6 +82,7 @@ function Row (props) {
                 InputProps={{
                     readOnly: true,
                 }} />
+                {/* <FeedbackArea eventStatus={row.eventStatus}/> */}
                 {/* <TableCell align='right'>{row.content}</TableCell> */}
               {/* </TableCell> */}
             </Box>
@@ -76,6 +99,15 @@ function Row (props) {
 async function SearchParticipation () {
   return await axios.get('http://localhost:8080/api/joins', { headers: authHeader() })
     .then((data) => { return data.data })
+}
+
+async function deleteParticipant(id) {
+  if (window.confirm('確定要取消參加？')) {
+    const url = 'http://localhost:8080/api/joins'
+    await axios.delete(url,{ headers: authHeader(),data:{id} }).then((data) => {
+      console.log(data)
+    })
+  }
 }
 
 async function formParticipation (participation) {
