@@ -1,7 +1,5 @@
 package backend.dbms.models;
 
-import java.util.Date;
-
 import javax.validation.constraints.NotBlank;
 
 import jakarta.persistence.Column;
@@ -20,26 +18,27 @@ import lombok.NonNull;
 @AllArgsConstructor
 @Entity
 @Data
-@Table(name = "course")
-public class Course {
+@Table(name = "classroom")
+public class Classroom {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "course_id")
-    private Long courseId;
+    @Column(name = "classroom_id")
+    private Long classroomId;
 
     @NonNull
-    @Column(name = "course_name", length = 20)
-    private String courseName;
+    @Column(name = "building_name", length = 30)
+    private String buildingName;
 
-    @NonNull
-    @Column(name = "instructor_name", length = 15)
-    private String instructorName;
+    @Column(name = "floor_number")
+    private int floorNumber;
 
-
-    @Column(name = "department_name", length = 20)
-    private String departmentName;
+    @NotBlank
+    @Column(name = "room_name", length = 20)
+    private String roomName;
     
-    @Column(name = "lecture_time", length = 20)
-    private String lectureTime;
+    @NotBlank
+    @Column(name = "capacity_size")
+    private int capacitySize;
+    
 }

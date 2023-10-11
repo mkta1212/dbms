@@ -1,4 +1,4 @@
-package backend.Service;
+package backend.dbms.Service;
 
 import java.util.Optional;
 
@@ -12,4 +12,6 @@ public interface UserService {
     Boolean existsByEmail(String email);
 
     void createUser(User user);
+
+    long count();
 }

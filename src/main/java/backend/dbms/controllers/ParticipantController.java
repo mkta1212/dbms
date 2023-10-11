@@ -16,14 +16,13 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import backend.dbms.models.StudyGroup;
-import backend.Service.Impl.ParticipationImpl;
-import backend.Service.Impl.StudyGroupImpl;
-import backend.Service.Impl.UserImpl;
+import backend.dbms.models.StudyEvent;
+import backend.dbms.Service.Impl.ParticipationImpl;
+import backend.dbms.Service.Impl.StudyEventImpl;
+import backend.dbms.Service.Impl.UserImpl;
 import backend.dbms.models.Participantion;
 import backend.dbms.models.Status;
 import backend.dbms.models.User;
-import backend.dbms.repository.StudyGroupDao;
 import backend.dbms.repository.ParticipantionDao;
 import backend.dbms.repository.UserDao;
 import backend.dbms.security.jwt.JwtUtils;
@@ -41,19 +40,19 @@ public class ParticipantController {
     private UserImpl userImpl;
 
     @Autowired
-    private StudyGroupImpl groupImpl;
+    private StudyEventImpl eventImpl;
 
     @Autowired
     private ParticipationImpl participationImpl;
 
     @PostMapping("/joins")
     @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
-    public void createParticipant(@RequestHeader("Authorization") String token,@RequestBody StudyGroup group){
+    public void createParticipant(@RequestHeader("Authorization") String token,@RequestBody StudyEvent event){
         String userName = jwtUtils.getUserNameFromJwtToken(token.substring(7, token.length()));
         User user = userImpl.getByUsername(userName).get();
-        group = groupImpl.getByGroupId(group.getGroupId()).get();
+        event = eventImpl.getByGroupId(event.getEventId()).get();
         Date date = new Date();
-        Participantion participantion = new Participantion(user,group,date);
+        Participantion participantion = new Participantion(user,event,date);
         participationImpl.createParticipation(participantion);
     }
 
@@ -68,20 +67,20 @@ public class ParticipantController {
     @DeleteMapping("/joins")
     @Transactional
     @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
-    public void deleParticipant(@RequestHeader("Authorization") String token,@RequestBody StudyGroup group){
+    public void deleParticipant(@RequestHeader("Authorization") String token,@RequestBody StudyEvent event){
         String userName = jwtUtils.getUserNameFromJwtToken(token.substring(7, token.length()));
         User user = userImpl.getByUsername(userName).get();
-        group = groupImpl.getByGroupId(group.getGroupId()).get();
-        System.err.println(group.toString());
-        participationImpl.deleteByUserAndGroup(user, group);
+        event = eventImpl.getByGroupId(event.getEventId()).get();
+        System.err.println(event.toString());
+        participationImpl.delete(user, event);
     }
 
     @PostMapping("/participantAmounts")
     @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
-    public Long getParticipantAmount(@RequestBody StudyGroup group){
-        group = groupImpl.getByGroupId(group.getGroupId()).get();
-        System.err.println(participationImpl.countByGroup(group));
-        return participationImpl.countByGroup(group);
+    public Long getParticipantAmount(@RequestBody StudyEvent event){
+        event = eventImpl.getByGroupId(event.getEventId()).get();
+        System.err.println(participationImpl.count(event));
+        return participationImpl.count(event);
     }
 
 

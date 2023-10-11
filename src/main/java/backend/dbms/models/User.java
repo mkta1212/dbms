@@ -14,7 +14,7 @@ import jakarta.persistence.*;
 @Entity
 @Table(name = "users", 
     uniqueConstraints = { 
-      @UniqueConstraint(columnNames = "username"),
+      @UniqueConstraint(columnNames = "user_name"),
       @UniqueConstraint(columnNames = "email") 
     })
 public class User {
@@ -48,7 +48,7 @@ public class User {
   @JsonManagedReference
   @OneToMany(mappedBy = "holder")
   // @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
-  private List<StudyGroup> hold;
+  private List<StudyEvent> hold;
 
   public User() {
   }

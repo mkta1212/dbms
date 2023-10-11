@@ -1,13 +1,17 @@
-package backend.Service.Impl;
+package backend.dbms.Service.Impl;
 
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
-import backend.Service.UserService;
+import backend.dbms.Service.UserService;
 import backend.dbms.models.User;
 import backend.dbms.repository.UserDao;
+import lombok.NoArgsConstructor;
 
+@NoArgsConstructor
+@Service
 public class UserImpl implements UserService{
 
     @Autowired
@@ -31,5 +35,10 @@ public class UserImpl implements UserService{
     @Override
     public void createUser(User user){
         userDao.save(user);
+    }
+
+    @Override
+    public long count(){
+        return userDao.count();
     }
 }

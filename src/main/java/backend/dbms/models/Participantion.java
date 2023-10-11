@@ -32,9 +32,9 @@ public class Participantion {
     
     // @ManyToOne(cascade = {CascadeType.PERSIST,CascadeType.MERGE})
     @ManyToOne
-    @JoinColumn(name = "group_id")
+    @JoinColumn(name = "event_id")
     @NonNull
-    private StudyGroup group;
+    private StudyEvent event;
     
     @NonNull
     @Column(name = "join_time")
@@ -42,12 +42,12 @@ public class Participantion {
 
     // private String feedback;
 
-    public Participantion(User user, StudyGroup group, Date joinTime) {
+    public Participantion(User user, StudyEvent event, Date joinTime) {
         this.user = user;
-        this.group  = group;
+        this.event  = event;
         this.joinTime = joinTime;
     }
-    public StudyGroup getGroup(){
-        return group;
+    public StudyEvent getEvent(){
+        return event;
     }
 }

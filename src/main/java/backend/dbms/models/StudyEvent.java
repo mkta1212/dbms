@@ -1,6 +1,7 @@
 package backend.dbms.models;
 
-import java.util.Date;
+import java.sql.Date;
+
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -27,40 +28,49 @@ import lombok.Setter;
 @Setter
 @Entity
 @Data
-@Table(name = "study_group")
-public class StudyGroup {
+@Table(name = "study_event")
+public class StudyEvent {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long groupId;
+    @Column(name = "event_id")
+    private Long eventId;
     
-
-    @NonNull
-    @Enumerated(EnumType.STRING)
-    @Column(length = 20)
-    private Status status;
-
-
-    @NotBlank
-    @Size(max = 100)
-    @NonNull
-    private String content;
-
-    @NonNull
-    private Date date;
-
-    
-    @NonNull
-    @Column(name = "user_max")
-    private int userMax;
-
-    // @OneToMany
-    // private Set<Participant> participantList = new HashSet<>();
-
     @NonNull
     @JsonBackReference
     @ManyToOne
     @JoinColumn(name="user_id")
     private User holder;
+
+    @NonNull
+    @ManyToOne
+    @JoinColumn(name="course_id")
+    private Course course;
+
+    @NonNull
+    @ManyToOne
+    @JoinColumn(name="classroom_id")
+    private Classroom classroom;
+
+    // @OneToMany
+    // private Set<Participant> participantList = new HashSet<>();
+
+    @Column(name = "event_date")
+    private Date eventDate;
+
+    @NotBlank
+    @Column(name = "user_max")
+    private int userMax;
+
+    @Size(max = 100)
+    @NonNull
+    private String content;
+
+    @NonNull
+    @Enumerated(EnumType.STRING)
+    @Column(length = 20)
+    private Status status;
+    
 
     public String getUserName(){
         return holder.getUsername();
@@ -68,8 +78,7 @@ public class StudyGroup {
     // public void addParticipant(Participant participant){
     //     participantList.add(participant);
     // }
-    public StudyGroup(Date date,  int userMax, String content){
-        this.date = date;
+    public StudyEvent(  int userMax, String content){
         this.userMax = userMax;
         this.content = content;
         

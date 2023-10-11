@@ -1,15 +1,19 @@
-package backend.Service.Impl;
+package backend.dbms.Service.Impl;
 
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
-import backend.Service.ParticipationService;
+import backend.dbms.Service.ParticipationService;
 import backend.dbms.models.Participantion;
-import backend.dbms.models.StudyGroup;
+import backend.dbms.models.StudyEvent;
 import backend.dbms.models.User;
 import backend.dbms.repository.ParticipantionDao;
+import lombok.NoArgsConstructor;
 
+@NoArgsConstructor
+@Service
 public class ParticipationImpl implements ParticipationService {
 
     @Autowired
@@ -21,13 +25,13 @@ public class ParticipationImpl implements ParticipationService {
     }
 
     @Override
-    public void deleteByUserAndGroup(User user, StudyGroup group) {
-        participantionDao.deleteByUserAndGroup(user, group);
+    public void delete(User user, StudyEvent event) {
+        participantionDao.deleteByUserAndEvent(user, event);
     }
 
     @Override
-    public long countByGroup(StudyGroup group) {
-        return participantionDao.countByGroup(group);
+    public long count(StudyEvent event) {
+        return participantionDao.countByEvent(event);
     }
     
     @Override

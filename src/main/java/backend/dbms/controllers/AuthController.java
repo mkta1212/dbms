@@ -20,8 +20,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import backend.Service.Impl.RoleImpl;
-import backend.Service.Impl.UserImpl;
+import backend.dbms.Service.Impl.RoleImpl;
+import backend.dbms.Service.Impl.UserImpl;
 import backend.dbms.models.ERole;
 import backend.dbms.models.Role;
 import backend.dbms.models.User;
@@ -42,13 +42,13 @@ public class AuthController {
   AuthenticationManager authenticationManager;
 
   @Autowired
-  UserImpl userImpl;
+  private UserImpl userImpl;
 
   @Autowired
-  RoleImpl roleImpl;
+  private RoleImpl roleImpl;
 
   @Autowired
-  PasswordEncoder encoder;
+  private PasswordEncoder encoder;
 
   @Autowired
   JwtUtils jwtUtils;
