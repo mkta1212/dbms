@@ -6,6 +6,6 @@ import org.springframework.stereotype.Repository;
 import backend.dbms.models.Course;
 
 @Repository
-public interface CoureseDao extends JpaRepository<Course,Long> {
+public interface CourseDao extends JpaRepository<Course,Long> {
     
 }
