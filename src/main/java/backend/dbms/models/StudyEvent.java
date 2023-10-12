@@ -55,6 +55,7 @@ public class StudyEvent {
     // @OneToMany
     // private Set<Participant> participantList = new HashSet<>();
 
+    @NonNull
     @Column(name = "event_date")
     private Date eventDate;
 

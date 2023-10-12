@@ -14,9 +14,10 @@ public interface StudyEventService {
     List<StudyEvent> getByStatus(Status status);
     List<StudyEvent> getAllGroups();
     List<StudyEvent> getByHolder(User user);
-    void createGroup(StudyEvent event);
-    Optional<StudyEvent> getByGroupId(Long id);
+    void createEvent(StudyEvent event);
+    Optional<StudyEvent> getByEventId(Long id);
     long count();
     List<StudyEvent> getByClassroomAndDate(Classroom classroom, Date date);
     List<EventId> getBookedPeriod(Classroom classroom, Date date);
+    List<StudyEvent> getByDateRange(Date starDate, Date endDate);
 }

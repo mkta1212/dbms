@@ -1,6 +1,7 @@
 package backend.dbms.Service.Impl;
 
 import java.sql.Date;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,7 +10,9 @@ import org.springframework.stereotype.Service;
 import backend.dbms.Service.StudyEventPeriodService;
 import backend.dbms.models.Classroom;
 import backend.dbms.models.StudyEvent;
+import backend.dbms.models.StudyEventPeriod;
 import backend.dbms.repository.EventId;
+import backend.dbms.repository.StudyEventPeriodDao;
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
@@ -18,11 +21,49 @@ public class StudyEventPeriodImpl implements StudyEventPeriodService {
 
     @Autowired
     private StudyEventImpl studyEventImpl;
+
+    @Autowired
+    private StudyEventPeriodDao eventPeriodDao;
+
+    public void createEventPeriod(StudyEventPeriod eventPeriod){
+        eventPeriodDao.save(eventPeriod);
+    }
     @Override
-    public boolean checkTimeAvailable(Classroom classroom, Date date, int period) {
-        List<EventId> eventList = studyEventImpl.getBookedPeriod(classroom, date);
+    public boolean checkTimeAvailable(Classroom classroom, Date date, List<Integer> periodList) {
+        // List<EventId> eventList = studyEventImpl.getBookedPeriod(classroom, date);
+        List<StudyEvent> eventList = studyEventImpl.getByClassroomAndDate(classroom, date);
+        for (StudyEvent event : eventList) {
+            System.err.println(event.toString());
+            for(StudyEventPeriod eventPeriod:eventPeriodDao.findByEvent(event)){
+                System.err.println(eventPeriod.toString());
+                if (periodList.contains(eventPeriod.getEventPeriod())){
+                    return false;
+
+                }
+            }   
+        }
         return true;
         
+    }
+
+    @Override
+    public int[][] findBookedTime(Classroom classroom, Date date){
+        int[][] periodList = new int[8][24];
+        for(int i = 0 ;i<=7;i++){
+            for(int j = 0;j<=23;j++){
+
+                periodList[i][j]=0;
+            }
+        }
+        List<StudyEvent> eventList = studyEventImpl.getByDateRange(date,new Date(date.getTime()+ 1000 * 60 * 60 * 24 *7));
+        for(StudyEvent event: eventList){
+            int day = (int)((event.getEventDate().getTime()-date.getTime())/86400000);
+            for(StudyEventPeriod eventPeriod:eventPeriodDao.findByEvent(event)){
+                periodList[day][eventPeriod.getEventPeriod()] = 1;
+            }
+        }
+        
+        return periodList;
     }
     
 }

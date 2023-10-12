@@ -15,4 +15,5 @@ public interface ParticipantionDao extends JpaRepository<Participantion, Long> {
   List<Participantion> findByUser(User user);
   void deleteByUserAndEvent(User user, StudyEvent event);
   long countByEvent(StudyEvent event);
+  
 }

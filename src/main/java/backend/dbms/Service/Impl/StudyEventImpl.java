@@ -38,12 +38,12 @@ public class StudyEventImpl implements StudyEventService {
     }
 
     @Override
-    public void createGroup(StudyEvent event){
+    public void createEvent(StudyEvent event){
         eventDao.save(event);
     }
 
     @Override
-    public Optional<StudyEvent> getByGroupId(Long id){
+    public Optional<StudyEvent> getByEventId(Long id){
         return eventDao.findById(id);
     }
     @Override
@@ -61,5 +61,8 @@ public class StudyEventImpl implements StudyEventService {
         return eventDao.findAllByClassroomAndEventDate(classroom, date);
     }
 
-    
+    @Override
+    public List<StudyEvent> getByDateRange(Date starDate, Date endDate) {
+        return eventDao.findByEventDateBetween(starDate, endDate);
+    }
 }

@@ -50,7 +50,7 @@ public class ParticipantController {
     public void createParticipant(@RequestHeader("Authorization") String token,@RequestBody StudyEvent event){
         String userName = jwtUtils.getUserNameFromJwtToken(token.substring(7, token.length()));
         User user = userImpl.getByUsername(userName).get();
-        event = eventImpl.getByGroupId(event.getEventId()).get();
+        event = eventImpl.getByEventId(event.getEventId()).get();
         Date date = new Date();
         Participantion participantion = new Participantion(user,event,date);
         participationImpl.createParticipation(participantion);
@@ -70,7 +70,7 @@ public class ParticipantController {
     public void deleParticipant(@RequestHeader("Authorization") String token,@RequestBody StudyEvent event){
         String userName = jwtUtils.getUserNameFromJwtToken(token.substring(7, token.length()));
         User user = userImpl.getByUsername(userName).get();
-        event = eventImpl.getByGroupId(event.getEventId()).get();
+        event = eventImpl.getByEventId(event.getEventId()).get();
         System.err.println(event.toString());
         participationImpl.delete(user, event);
     }
@@ -78,7 +78,7 @@ public class ParticipantController {
     @PostMapping("/participantAmounts")
     @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
     public Long getParticipantAmount(@RequestBody StudyEvent event){
-        event = eventImpl.getByGroupId(event.getEventId()).get();
+        event = eventImpl.getByEventId(event.getEventId()).get();
         System.err.println(participationImpl.count(event));
         return participationImpl.count(event);
     }

@@ -57,7 +57,7 @@ public class StudyGroupController {
         User user = userRepository.findByUsername(userName).get();
         event.setHolder(user);
         event.setStatus(Status.Ongoing);;
-        eventImpl.createGroup(event);
+        eventImpl.createEvent(event);
     }
     @GetMapping("/mystudyGroups")
     @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
