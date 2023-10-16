@@ -19,5 +19,7 @@ public interface StudyEventService {
     long count();
     List<StudyEvent> getByClassroomAndDate(Classroom classroom, Date date);
     List<EventId> getBookedPeriod(Classroom classroom, Date date);
-    List<StudyEvent> getByDateRange(Date starDate, Date endDate);
+    List<StudyEvent> getByDateRange(Date startDate, Date endDate);
+    List<StudyEvent> getByDate(Date date);
+    
 }

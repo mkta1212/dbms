@@ -2,6 +2,9 @@ package backend.dbms.models;
 
 import javax.validation.constraints.NotBlank;
 
+import org.springframework.stereotype.Component;
+
+import jakarta.annotation.Nullable;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -19,6 +22,7 @@ import lombok.NonNull;
 @Entity
 @Data
 @Table(name = "classroom")
+@Component
 public class Classroom {
 
     @Id
@@ -31,7 +35,7 @@ public class Classroom {
     private String buildingName;
 
     @Column(name = "floor_number")
-    private int floorNumber;
+    private Integer floorNumber;
 
     @NotBlank
     @Column(name = "room_name", length = 20)

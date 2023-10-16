@@ -65,4 +65,9 @@ public class StudyEventImpl implements StudyEventService {
     public List<StudyEvent> getByDateRange(Date starDate, Date endDate) {
         return eventDao.findByEventDateBetween(starDate, endDate);
     }
+
+    @Override
+    public List<StudyEvent> getByDate(Date date) {
+        return eventDao.findByEventDate(date);
+    }
 }

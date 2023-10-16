@@ -14,6 +14,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
+import backend.dbms.Service.Pair;
 import backend.dbms.Service.Impl.ClassroomImpl;
 import backend.dbms.Service.Impl.CourseImpl;
 import backend.dbms.Service.Impl.ParticipationImpl;
@@ -83,8 +84,9 @@ public class DataLoader implements CommandLineRunner {
 
         }
         User user1 = userImpl.getByUsername("111111").get();
-        autoGenerate(user1);
-        findBookedTime();
+        // autoGenerate(user1);
+        // findBookedTime();
+        findBookedClassroom();
     }
 
     public void autoGenerate (User user) throws ParseException{
@@ -134,6 +136,14 @@ public class DataLoader implements CommandLineRunner {
             for (int j = 0; j<periodList[i].length; j++){
                 System.err.println(j+":"+ periodList[i][j]);
             }
+        }
+    }
+    public void findBookedClassroom() throws ParseException{
+        DateFormat df = new SimpleDateFormat("yyyy/MM/dd");
+        Date today = new Date(df.parse("2023/10/17").getTime());
+        List<Pair> pairs =  eventPeriodImpl.findBookedClassroom(today);
+        for(int i = 0; i<5;i++){
+            System.out.println(pairs.get(i));
         }
     }
     

@@ -1,5 +1,6 @@
 package backend.dbms.Service.Impl;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +25,11 @@ public class ClassroomImpl implements ClassroomService {
     @Override
     public Optional<Classroom> getByClassroomId(Long id) {
         return classroomDao.findById(id);
+    }
+
+    @Override
+    public List<Classroom> getAllClassroom() {
+        return classroomDao.findAll();
     }
 
 }

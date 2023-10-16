@@ -21,4 +21,5 @@ public interface StudyEventDao extends JpaRepository<StudyEvent, Long> {
   List<StudyEvent> findByClassroomAndEventDate(Classroom classroom, Date date);
   List<EventId> findAllByClassroomAndEventDate(Classroom classroom, Date date);
   List<StudyEvent> findByEventDateBetween(Date startDate, Date endDate);
+  List<StudyEvent> findByEventDate(Date date);
 }
