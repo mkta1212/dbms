@@ -19,6 +19,7 @@ import SearchPage from "searchPage";
 import CreateEvent from "event/createEvent";
 import MyEvents from "event/myEvent";
 import MyParticipation from "event/myParticipation";
+import BookedClassroom from "event/bookedClassroom";
 
 class App extends Component {
   constructor(props) {
@@ -148,6 +149,8 @@ class App extends Component {
               <Route path="/createEvents" element={<CreateEvent />} />
               <Route path="/myEvents" element={<MyEvents />} />
               <Route path="/myParticipation" element={<MyParticipation />} />
+              <Route path="chooseClassroom" element = {<BookedClassroom />} />
+              <Route path="board" element = {<BoardAdmin />} />
               {/* <Route exact path={["/", "/home"]} component={Home} />
               <Route exact path="/login" component={Login} />
               <Route exact path="/register" component={Register} />

@@ -141,7 +141,7 @@ public class DataLoader implements CommandLineRunner {
     public void findBookedClassroom() throws ParseException{
         DateFormat df = new SimpleDateFormat("yyyy/MM/dd");
         Date today = new Date(df.parse("2023/10/17").getTime());
-        List<Pair> pairs =  eventPeriodImpl.findBookedClassroom(today);
+        List<Pair> pairs =  classroomImpl.findBookedClassroom(today);
         for(int i = 0; i<5;i++){
             System.out.println(pairs.get(i));
         }

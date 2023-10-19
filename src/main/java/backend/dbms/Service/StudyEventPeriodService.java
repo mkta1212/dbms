@@ -13,5 +13,5 @@ public interface StudyEventPeriodService {
     boolean checkTimeAvailable(Classroom classroom, Date date, List<Integer> period);
     int[][]  findBookedTime(Classroom classroom, Date date);
     void createEventPeriod(StudyEventPeriod eventPeriod);
-    List<Pair> findBookedClassroom(Date date);
+    
 }

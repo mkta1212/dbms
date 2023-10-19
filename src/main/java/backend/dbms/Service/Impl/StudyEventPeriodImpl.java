@@ -72,44 +72,5 @@ public class StudyEventPeriodImpl implements StudyEventPeriodService {
         return periodList;
     }
 
-    @Override
-    public List<Pair> findBookedClassroom(Date date){
-        
-        List<Classroom> classroomList = classroomImpl.getAllClassroom();
-        HashMap<Long, int[]> eventMap = new HashMap<Long, int[]>();
-        for(Classroom classroom: classroomList){
-            int[] periodList = new int[24];
-            eventMap.put(classroom.getClassroomId(),periodList);
-        }
-        List<Pair> bookedList = new ArrayList<Pair>();
-        List<StudyEvent> bookedEventList = studyEventImpl.getByDate(date);
-        for (StudyEvent event: bookedEventList){
-            List<StudyEventPeriod> eventPeriodList = eventPeriodDao.findByEvent(event);
-            for(StudyEventPeriod eventPeriod: eventPeriodList){
-                int[] periodList = eventMap.get(event.getClassroom().getClassroomId());
-                periodList[eventPeriod.getEventPeriod()] = 1;
-                eventMap.put(eventPeriod.getEvent().getClassroom().getClassroomId(),periodList);
-            }
-            
-        }
-        for(Classroom classroom: classroomList){
-                int[] periodList = eventMap.get(classroom.getClassroomId());
-                Pair pair = new Pair(classroom,periodList);
-                bookedList.add(pair);
-            }
-        return bookedList;
-        // List<StudyEventPeriod> eventPeriodList = eventPeriodDao.findByDate(date);
-        // for(StudyEventPeriod eventPeriod: eventPeriodList){
-        //     int[] periodList = eventMap.get(eventPeriod.getEvent().getEventId());
-        //     periodList[eventPeriod.getEventPeriod()] = 1;
-        //     eventMap.put(eventPeriod.getEvent().getEventId(),periodList);
-        // }
-        // List<Pair> bookedList = new ArrayList<Pair>();
-        // for(StudyEvent event: eventList){
-        //     int[] periodList = eventMap.get(event.getEventId());
-        //     Pair pair = new Pair(event,periodList);
-        //     bookedList.add(pair);
-        // }
-        // return bookedList;
-    }
+    
 }

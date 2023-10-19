@@ -51,12 +51,11 @@ public class SecurityConfig {
 
   @Bean
   protected SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-
+  
     http.csrf(csrf -> csrf.disable())
     // .exceptionHandling(exception -> exception.authenticationEntryPoint())
     .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-    .authorizeHttpRequests(auth -> auth.requestMatchers("/api/auth/**").permitAll()
-    .requestMatchers("/api/**").permitAll()
+    .authorizeHttpRequests(auth -> auth.requestMatchers("/api/**").permitAll()
     .anyRequest().authenticated());
 
   return http.build();
