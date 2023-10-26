@@ -51,23 +51,23 @@ public class StudyEventImpl implements StudyEventService {
         return eventDao.count();
     }
 
-    @Override
-    public List<StudyEvent> getByClassroomAndDate(Classroom classroom, Date date) {
-        return eventDao.findByClassroomAndEventDate(classroom, date);
-    }
+    // @Override
+    // public List<StudyEvent> getByClassroomAndDate(Classroom classroom, Date date) {
+    //     return eventDao.findByClassroomAndEventDate(classroom, date);
+    // }
 
-    @Override
-    public List<EventId> getBookedPeriod(Classroom classroom, Date date) {
-        return eventDao.findAllByClassroomAndEventDate(classroom, date);
-    }
+    // @Override
+    // public List<EventId> getBookedPeriod(Classroom classroom, Date date) {
+    //     return eventDao.findAllByClassroomAndEventDate(classroom, date);
+    // }
 
-    @Override
-    public List<StudyEvent> getByDateRange(Date starDate, Date endDate) {
-        return eventDao.findByEventDateBetween(starDate, endDate);
-    }
+    // @Override
+    // public List<StudyEvent> getByDateRange(Date starDate, Date endDate) {
+    //     return eventDao.findByEventDateBetween(starDate, endDate);
+    // }
 
-    @Override
-    public List<StudyEvent> getByDate(Date date) {
-        return eventDao.findByEventDate(date);
-    }
+    // @Override
+    // public List<StudyEvent> getByDate(Date date) {
+    //     return eventDao.findByEventDate(date);
+    // }
 }

@@ -70,57 +70,61 @@ public class DataLoader implements CommandLineRunner {
         
 
         if (userImpl.count() == 0) {
-            for(int i=1; i<=2; i++){
-                User user1 = new User(Integer.toString(i*111111), Integer.toString(i*111111)+"gmail.com", encoder.encode(Integer.toString(i*111111)));
+            for(int i=1; i<=100; i++){
+                User user = new User(Integer.toString(i*111111), Integer.toString(i*111111)+"gmail.com", encoder.encode(Integer.toString(i*111111)));
                 Role modRole = roleImpl.getByName(ERole.ROLE_ADMIN)
                                 .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
                 Set<Role> role1 = new HashSet<>();
                 role1.add(modRole);
-                user1.setRoles(role1);
-                userImpl.createUser(user1);
-
+                user.setRoles(role1);
+                userImpl.createUser(user);
+                autoGenerateEvent(user);
                 
             }           
 
         }
-        User user1 = userImpl.getByUsername("111111").get();
-        // autoGenerate(user1);
-        // findBookedTime();
+        // User user1 = userImpl.getByUsername("111111").get();
+        // autoGenerateEvent(user1);
+        findBookedTime();
         findBookedClassroom();
     }
 
-    public void autoGenerate (User user) throws ParseException{
+    public void autoGenerateEvent (User user) throws ParseException{
         long courseCount = courseImpl.count();
         long classroomCount = classroomImpl.count();
         Random r = new Random();
         DateFormat df = new SimpleDateFormat("yyyy/MM/dd");
-        Date today = new Date(df.parse("2023/10/15").getTime());
-        for(int j=0; j<10; j++){
+        Date today = new Date(df.parse("2023/10/25").getTime());
+        for(int j=0; j<120; j++){
                     long courseId = r.nextLong(courseCount);
-                    System.err.println();
-                    Course course = courseImpl.getByCourseId(courseId)
-                            .orElseThrow(() -> new RuntimeException("Error: Course"+courseId+" is not found."));
-                    // int day = r.nextInt(7)+1;
-                    int day = r.nextInt(2)+1;
-                    Date eventDate = new Date(today.getTime()+ 1000 * 60 * 60 * 24 *day);
-                    List<Integer> periodList = new ArrayList<Integer>();
-                    int periodLen = r.nextInt(3);
-                    int period = r.nextInt(13)+8;
-                    for(int p=0; p<=periodLen; p++){
-                        periodList.add(period+p);
-                    }
-                    // long classroomId = r.nextLong(classroomCount)+1;
-                    long classroomId = r.nextLong(1)+1;
-                    Classroom classroom = classroomImpl.getByClassroomId(classroomId)
-                            .orElseThrow(() -> new RuntimeException("Error: Classroom is not found."));
-                    if(eventPeriodImpl.checkTimeAvailable(classroom,eventDate,periodList)){
-                        StudyEvent studyEvent = new StudyEvent(user, course, classroom,eventDate, "", Status.Ongoing);
-                        eventImpl.createEvent(studyEvent);
+                    try{
+                        Course course = courseImpl.getByCourseId(courseId).get();
+                        int day = r.nextInt(7)+1;
+                        Date eventDate = new Date(today.getTime()+ 1000 * 60 * 60 * 24 *day);
+                        List<Integer> periodList = new ArrayList<Integer>();
+                        int periodLen = r.nextInt(3);
+                        int period = r.nextInt(13)+8;
                         for(int p=0; p<=periodLen; p++){
-                            StudyEventPeriod eventPeriod = new StudyEventPeriod(studyEvent, period+p);
-                            eventPeriodImpl.createEventPeriod(eventPeriod);
+                            periodList.add(period+p);
+                        }
+                        long classroomId = r.nextLong(classroomCount)+1;;
+                        Classroom classroom = classroomImpl.getByClassroomId(classroomId)
+                                .orElseThrow(() -> new RuntimeException("Error: Classroom is not found."));
+                        if(eventPeriodImpl.checkTimeAvailable(classroom,eventDate,periodList)){
+                            // StudyEvent studyEvent = new StudyEvent(user, course, classroom,eventDate, "", Status.Ongoing);
+                            StudyEvent studyEvent = new StudyEvent(user, course, "", Status.Ongoing);
+                            eventImpl.createEvent(studyEvent);
+                            for(int p=0; p<=periodLen; p++){
+                                // StudyEventPeriod eventPeriod = new StudyEventPeriod(studyEvent, period+p);
+                                StudyEventPeriod eventPeriod = new StudyEventPeriod(studyEvent, classroom, eventDate, period+p);
+                                eventPeriodImpl.createEventPeriod(eventPeriod);
+                            }
                         }
                     }
+                    catch(Exception e){
+
+                    }
+                    
                     
                 }
     }

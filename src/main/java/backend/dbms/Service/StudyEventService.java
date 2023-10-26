@@ -17,9 +17,9 @@ public interface StudyEventService {
     void createEvent(StudyEvent event);
     Optional<StudyEvent> getByEventId(Long id);
     long count();
-    List<StudyEvent> getByClassroomAndDate(Classroom classroom, Date date);
-    List<EventId> getBookedPeriod(Classroom classroom, Date date);
-    List<StudyEvent> getByDateRange(Date startDate, Date endDate);
-    List<StudyEvent> getByDate(Date date);
+    // List<StudyEvent> getByClassroomAndDate(Classroom classroom, Date date);
+    // List<EventId> getBookedPeriod(Classroom classroom, Date date);
+    // List<StudyEvent> getByDateRange(Date startDate, Date endDate);
+    // List<StudyEvent> getByDate(Date date);
     
 }

@@ -63,14 +63,23 @@ class App extends Component {
   }
 
   render() {
+    // let isTabHidden = false;
+    // function clearUser(){
+    //   localStorage.removeItem("user");
+    // }
+   
+    // document.addEventListener('visibilitychange', () => {
+    //   if (document.visibilityState === 'hidden') {
+    //       isTabHidden = true;
+    //   }
+    //  });
+    // window.addEventListener('beforeunload',()=>{
+    //   if(isTabHidden){
+    //     localStorage.removeItem("user")} });
     const { currentUser, showModeratorBoard, showAdminBoard } = this.state;
-
     return (
       <div>
         <nav className="navbar navbar-expand navbar-dark bg-dark">
-          <Link to={"/"} className="navbar-brand">
-            bezKoder
-          </Link>
           <div className="navbar-nav mr-auto">
             <li className="nav-item">
               <Link to={"/home"} className="nav-link">

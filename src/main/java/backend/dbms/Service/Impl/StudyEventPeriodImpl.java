@@ -37,16 +37,22 @@ public class StudyEventPeriodImpl implements StudyEventPeriodService {
     @Override
     public boolean checkTimeAvailable(Classroom classroom, Date date, List<Integer> periodList) {
         // List<EventId> eventList = studyEventImpl.getBookedPeriod(classroom, date);
-        List<StudyEvent> eventList = studyEventImpl.getByClassroomAndDate(classroom, date);
-        for (StudyEvent event : eventList) {
-            System.err.println(event.toString());
-            for(StudyEventPeriod eventPeriod:eventPeriodDao.findByEvent(event)){
-                System.err.println(eventPeriod.toString());
-                if (periodList.contains(eventPeriod.getEventPeriod())){
-                    return false;
+        // List<StudyEvent> eventList = studyEventImpl.getByClassroomAndDate(classroom, date);
+        // for (StudyEvent event : eventList) {
+        //     System.err.println(event.toString());
+        //     for(StudyEventPeriod eventPeriod:eventPeriodDao.findByEvent(event)){
+        //         System.err.println(eventPeriod.toString());
+        //         if (periodList.contains(eventPeriod.getEventPeriod())){
+        //             return false;
 
-                }
-            }   
+        //         }
+        //     }   
+        // }
+        List<StudyEventPeriod> bookedPeriodList = eventPeriodDao.findByClassroomAndEventDate(classroom, date);
+        for(StudyEventPeriod bookedPeriod: bookedPeriodList){
+            if(periodList.contains(bookedPeriod.getEventPeriod())){
+                return false;
+            }
         }
         return true;
         
@@ -62,14 +68,19 @@ public class StudyEventPeriodImpl implements StudyEventPeriodService {
                 periodList[i][j]=0;
             }
         }
-        List<StudyEvent> eventList = studyEventImpl.getByDateRange(date,new Date(date.getTime()+ 1000 * 60 * 60 * 24 *7));
-        for(StudyEvent event: eventList){
-            int day = (int)((event.getEventDate().getTime()-date.getTime())/86400000);
-            for(StudyEventPeriod eventPeriod:eventPeriodDao.findByEvent(event)){
-                periodList[day][eventPeriod.getEventPeriod()] = 1;
-            }
+        List<StudyEventPeriod> eventPeriodList = eventPeriodDao.findByEventDateBetween(date,new Date(date.getTime()+ 1000 * 60 * 60 * 24 *7));
+        for(StudyEventPeriod eventPeriod:eventPeriodList){
+            int day = (int)((eventPeriod.getEventDate().getTime()-date.getTime())/86400000);
+            periodList[day][eventPeriod.getEventPeriod()] = 1;
         }
         return periodList;
+        // List<StudyEvent> eventList = studyEventImpl.getByDateRange(date,new Date(date.getTime()+ 1000 * 60 * 60 * 24 *7));
+        // for(StudyEvent event: eventList){
+        //     int day = (int)((event.getEventDate().getTime()-date.getTime())/86400000);
+        //     for(StudyEventPeriod eventPeriod:eventPeriodDao.findByEvent(event)){
+        //         periodList[day][eventPeriod.getEventPeriod()] = 1;
+        //     }
+        // }
     }
 
     

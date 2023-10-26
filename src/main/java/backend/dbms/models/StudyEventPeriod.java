@@ -1,6 +1,8 @@
 package backend.dbms.models;
 
 
+import java.sql.Date;
+
 import javax.validation.constraints.NotBlank;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
@@ -37,13 +39,24 @@ public class StudyEventPeriod {
     @ManyToOne
     @JoinColumn(name="event_id")
     private StudyEvent event;
+
+    @NonNull
+    @ManyToOne
+    @JoinColumn(name="classroom_id")
+    private Classroom classroom;
+
+    @NonNull
+    @Column(name = "event_date")
+    private Date eventDate;
     
     @NotBlank
     @Column(name = "event_period")
     private int eventPeriod;
 
-    public StudyEventPeriod(StudyEvent event, int period) {
+    public StudyEventPeriod(StudyEvent event, Classroom classroom, Date evenDate, int period) {
         this.event = event;
+        this.classroom = classroom;
         this.eventPeriod = period;
+        this.eventDate = evenDate;
     }
 }

@@ -18,9 +18,12 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import backend.dbms.Service.Pair;
 import backend.dbms.Service.Impl.ClassroomImpl;
 import backend.dbms.Service.Impl.StudyEventPeriodImpl;
+import backend.dbms.controllers.Response.ResDate;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
@@ -30,11 +33,14 @@ public class ClassroomController {
     @Autowired
     private ClassroomImpl classroomImpl;
 
-    @GetMapping("/classroom/booked")
-    public List<Pair> bookedClassroom() throws ParseException{
+    @JsonFormat(pattern="yyyy-MM-dd")
+    @PostMapping("/classroom/booked")
+    public List<Pair> bookedClassroom(@RequestBody ResDate  date) throws ParseException{
         DateFormat df = new SimpleDateFormat("yyyy/MM/dd");
-        Date today = new Date(df.parse("2023/10/17").getTime());
-        List<Pair> classroomList  = classroomImpl.findBookedClassroom(today);
+        // Date today = new Date(df.parse("2023/10/17").getTime());
+        System.err.println(date);
+        // Date formatDate = new Date(df.parse(date.getDate()).getTime());
+        List<Pair> classroomList  = classroomImpl.findBookedClassroom(date.getDate());
         return classroomList;
     }
 

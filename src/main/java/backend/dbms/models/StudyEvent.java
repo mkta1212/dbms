@@ -47,17 +47,17 @@ public class StudyEvent {
     @JoinColumn(name="course_id")
     private Course course;
 
-    @NonNull
-    @ManyToOne
-    @JoinColumn(name="classroom_id")
-    private Classroom classroom;
+    // @NonNull
+    // @ManyToOne
+    // @JoinColumn(name="classroom_id")
+    // private Classroom classroom;
 
     // @OneToMany
     // private Set<Participant> participantList = new HashSet<>();
 
-    @NonNull
-    @Column(name = "event_date")
-    private Date eventDate;
+    // @NonNull
+    // @Column(name = "event_date")
+    // private Date eventDate;
 
     @NotBlank
     @Column(name = "user_max")
