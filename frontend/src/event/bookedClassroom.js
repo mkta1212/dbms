@@ -13,7 +13,6 @@ import Typography from '@mui/material/Typography'
 import TextField from '@mui/material/TextField'
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
-import InputLabel from '@mui/material/InputLabel';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
@@ -24,42 +23,88 @@ import { useEffect, useState } from 'react'
 import UserService from "../services/user.service";
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp'
-import ToggleButton from '@mui/material/ToggleButton';
-import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import CircularProgress from '@mui/material/CircularProgress';
 import { DesktopTimePicker } from '@mui/x-date-pickers/DesktopTimePicker';
-import { DigitalClock } from '@mui/x-date-pickers/DigitalClock';
-import { format } from 'date-fns';
-import { Time } from 'time-js'
 import dayjs from 'dayjs'
 import moment from 'moment/moment'
-function ClassroomBlock(props){
-    const {classroom, periodList} = props
-    return(
-        <>
-            <TableRow >
-                <TableCell  width="100%" >{classroom.roomName}</TableCell>
-            </TableRow>
-            <TableCell sx={{ borderBottom: "none"}} >
-                {periodList.map((period,index)=>{
-                    if(period===0 && index>=8 && index<=21){
-                      return(<Button variant='outlined' style={{ margin: 2 }} id={classroom.roomName+index}>{index}:00</Button>)
-                    }
-                    else if(period===1){
-                      return (<Button variant='outlined' style={{ margin: 2 }} disabled>{index}:00</Button>)
-                    }
-                    return ""
-                   
-               
-            })}
-            </TableCell>
-        </>
-    )
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
+
+function BookedPrompt(props){
+  const {roomName,selectedBtn} = props
+  const [open, setOpen] = useState(false);
+  console.log(props)
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  return (
+    <Box textAlign="right">
+      <Button variant="outlined" onClick={handleClickOpen} id={roomName+"btn"} hidden>
+        Submit
+      </Button>
+      <Dialog
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">
+          以下為預約資訊
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            教室：{selectedBtn.classroomName}
+          </DialogContentText>   
+          <DialogContentText>
+            預約時段：{selectedBtn.periodList[0]}:00 - {selectedBtn.periodList[selectedBtn.periodList.length-1]}:00
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose}>取消</Button>
+          <Button onClick={handleClose} autoFocus>
+          確定，下一步
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </Box>
+  );
 }
+function ClassroomBlock(props){
+  const {classroom, periodList, selectBtn, selectedBtn} = props
+  console.log(props)
+
+  return(
+      <>
+          <TableRow >
+              <TableCell  width="100%" >{classroom.roomName}</TableCell>
+          </TableRow>
+          <TableCell sx={{ borderBottom: "none"}} >
+              {periodList.map((period,index)=>{
+                  if(period===0 && index>=8 && index<=21){
+                    return(<Button variant='outlined' style={{ margin: 2 }} id={classroom.roomName+":"+index} onClick={()=>{selectBtn(classroom.roomName,index)}}>{index}:00</Button>)
+                  }
+                  else if(period===1){
+                    return (<Button variant='outlined' style={{ margin: 2 }} disabled>{index}:00</Button>)
+                  }
+                  return ""
+                        })}
+          </TableCell>
+          <BookedPrompt roomName = {classroom.roomName} selectedBtn = {selectedBtn} />
+      </>
+  )
+}
+
 function Row(props){
-  // 設定使用者下拉式選單開闔
   const [open, setOpen] = useState(false)
-  const {buildingName, classrooms, desiredTime} = props
+  const {buildingName, classrooms, desiredTime, selectBtn, selectedBtn} = props
     // console.log(buildingName)
     // console.log(classrooms)
   return (
@@ -83,12 +128,11 @@ function Row(props){
               
               {classrooms.map((pair)=>{
                 if(desiredTime!==0){
-                  return <ClassroomBlock classroom = {pair[0]} periodList = {pair[1]}/>
+                  return <ClassroomBlock classroom = {pair[0]} periodList = {pair[1]} selectBtn = {selectBtn} selectedBtn = {selectedBtn}/>
                 }
                 else{
-                  console.log(desiredTime)
                   if(pair[1][desiredTime]===0){
-                    return <ClassroomBlock classroom = {pair[0]} periodList = {pair[1]}/>
+                    return <ClassroomBlock classroom = {pair[0]} periodList = {pair[1]} selectBtn = {selectBtn} selectedBtn = {selectedBtn}/>
                   }
                 }
                 return ""
@@ -102,6 +146,7 @@ function Row(props){
     </>
   )
 }
+
 async function searchClassroom(date){
     // console.log(date)
     // date= `${date.getFullYear()}/${(date.getMonth()+1)}/${date.getDate()}`;
@@ -133,13 +178,10 @@ export default function BookedClassroom(){
     const [time, setTime] = useState(0);
     const [loading, setLoading] = useState(false);
     const [classroomList,setClassroomList] = useState(new Map());
-    const fetchData = async () => {
-        const classroomList = await Promise.all(searchClassroom(date))
-        return classroomList
-      }
-      document.addEventListener("DOMContentLoaded", (event) => {
-        alert("DOM fully loaded and parsed");
-      });
+    const [selectedBtn, setSelectedBtn] = useState({
+      classroomName:"",
+      periodList:[]
+    })
     useEffect(()=>{
         setLoading(true)
         searchClassroom(date).then((data)=>{
@@ -152,7 +194,60 @@ export default function BookedClassroom(){
     useEffect(()=>{
       setClassroomList(formList(filter(classroomList,time)))
     }, [time])
+
+    function selectBtn(classroomName,period){
+      if(selectedBtn.classroomName===""){
+        document.getElementById(classroomName+":"+period).style.backgroundColor="#66B3FF"
+        document.getElementById(classroomName+"btn").hidden=false
+        setSelectedBtn({
+          classroomName:classroomName,
+          periodList:[period]
+        })
+      }
+      else if(classroomName === selectedBtn.classroomName){
+        if (selectedBtn.periodList.includes(period)){
+          if(selectedBtn.periodList.length===3 && period===selectedBtn.periodList[1]){
+            alert("時段需要連續")
+          }
+          else{
+            const i = selectedBtn.periodList.indexOf(period) 
+            selectedBtn.periodList.splice(i,1)
+            document.getElementById(classroomName+":"+period).style.backgroundColor=""
+            document.getElementById(classroomName+"btn").hidden=(selectedBtn.periodList.length===0)?true:false
+            setSelectedBtn({
+              classroomName:(selectedBtn.periodList.length===0)?"":classroomName,
+              periodList:selectedBtn.periodList
+            }) 
+          }
+        }
+        else{
+          if(selectedBtn.periodList.length===3){
+            alert("只能選三個連續時段")
+          }
+          else{
+            if(selectedBtn.periodList.includes(period-1)||selectedBtn.periodList.includes(period+1)){
+              document.getElementById(classroomName+":"+period).style.backgroundColor="#66B3FF"
+              setSelectedBtn({
+                classroomName:classroomName,
+                periodList:[...selectedBtn.periodList, period].sort()
+              })
+            }
+            else{
+              alert("請選擇連續的時段")
+            }
+          }
+        }
+        
+      }
+      else{
+        alert("請選擇相同教室")
+      }
+    }
     
+    useEffect(()=>{
+      console.log(selectedBtn)
+    }, [selectedBtn])
+
     return (
         <>
         {loading?
@@ -205,12 +300,9 @@ export default function BookedClassroom(){
               <Row building = {value} classroomList = {key} />
           })} */}
           {
-              [...classroomList.entries()].map((pair)=>{
-                if(pair[0]==="共同"){
-                  return <Row buildingName = {pair[0]} classrooms = {pair[1]} desiredTime = {time} />
-                }
-                  
-              })
+              [...classroomList.entries()].map((pair)=>(
+                  <Row buildingName = {pair[0]} classrooms = {pair[1]} desiredTime = {time} selectBtn={selectBtn} selectedBtn = {selectedBtn}/>
+              ))
           }
           </TableBody>
           </>
