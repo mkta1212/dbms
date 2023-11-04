@@ -1,5 +1,6 @@
 package backend.dbms.Service.Impl;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,5 +32,12 @@ public class CourseImpl implements CourseService {
     public Long count() {
         return courseDao.count();
     }
+
+    @Override
+    public List<Course> searchByCourseOrInstructor(String courseName, String instructorName) {
+        return courseDao.findByCourseNameLikeOrInstructorNameLike(courseName, instructorName);
+    }
+
+    
     
 }

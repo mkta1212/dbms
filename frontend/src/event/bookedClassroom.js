@@ -24,7 +24,7 @@ import UserService from "../services/user.service";
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp'
 import CircularProgress from '@mui/material/CircularProgress';
-import { DesktopTimePicker } from '@mui/x-date-pickers/DesktopTimePicker';
+import { TimePicker } from '@mui/x-date-pickers/TimePicker';
 import dayjs from 'dayjs'
 import moment from 'moment/moment'
 import Dialog from '@mui/material/Dialog';
@@ -36,14 +36,20 @@ import DialogTitle from '@mui/material/DialogTitle';
 function BookedPrompt(props){
   const {roomName,selectedBtn} = props
   const [open, setOpen] = useState(false);
-  console.log(props)
+  
   const handleClickOpen = () => {
     setOpen(true);
   };
 
   const handleClose = () => {
     setOpen(false);
+    console.log(selectedBtn)
   };
+
+  function nextPage(){
+    sessionStorage.setItem("bookedInfo",JSON.stringify(selectedBtn))
+    window.location.href="/createEvents"
+  }
 
   return (
     <Box textAlign="right">
@@ -64,12 +70,15 @@ function BookedPrompt(props){
             教室：{selectedBtn.classroomName}
           </DialogContentText>   
           <DialogContentText>
-            預約時段：{selectedBtn.periodList[0]}:00 - {selectedBtn.periodList[selectedBtn.periodList.length-1]}:00
+            預約日期：{selectedBtn.date}
+          </DialogContentText>  
+          <DialogContentText>
+            預約時段：{selectedBtn.periodList[0]}:00 - {(selectedBtn.periodList[selectedBtn.periodList.length-1]+1)}:00
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose}>取消</Button>
-          <Button onClick={handleClose} autoFocus>
+          <Button onClick={handleClose} autoFocus>取消</Button>
+          <Button onClick={nextPage}>
           確定，下一步
           </Button>
         </DialogActions>
@@ -79,7 +88,7 @@ function BookedPrompt(props){
 }
 function ClassroomBlock(props){
   const {classroom, periodList, selectBtn, selectedBtn} = props
-  console.log(props)
+  // console.log(props)
 
   return(
       <>
@@ -148,9 +157,9 @@ function Row(props){
 }
 
 async function searchClassroom(date){
-    // console.log(date)
+    console.log(date)
     // date= `${date.getFullYear()}/${(date.getMonth()+1)}/${date.getDate()}`;
-    return  await axios.post('http://localhost:8080/api/classroom/booked', {date}, { headers: {'content-type': 'application/json',Authorization:authHeader().Authorization}})
+    return  await axios.post('/api/classroom/booked', {date}, { headers: {'content-type': 'application/json',Authorization:authHeader().Authorization}})
     .then((data)=>{return data.data})
 }
 function formList(classroomList){
@@ -177,22 +186,30 @@ export default function BookedClassroom(){
     const [date, setDate] = useState( moment(new Date()).format('YYYY-MM-DD'));
     const [time, setTime] = useState(0);
     const [loading, setLoading] = useState(false);
+    const [AllClassroomList, setAllClassroomList] = useState(new Map());
     const [classroomList,setClassroomList] = useState(new Map());
     const [selectedBtn, setSelectedBtn] = useState({
+      date:date,
       classroomName:"",
       periodList:[]
     })
     useEffect(()=>{
         setLoading(true)
         searchClassroom(date).then((data)=>{
+            setAllClassroomList(formList(data))
             setClassroomList(formList(data))
+            setSelectedBtn({
+              date:date,
+              classroomName:"",
+              periodList:[]
+            })
             setLoading(false)
         })
         
     },[date])
 
     useEffect(()=>{
-      setClassroomList(formList(filter(classroomList,time)))
+      setClassroomList(formList(filter(AllClassroomList,time)))
     }, [time])
 
     function selectBtn(classroomName,period){
@@ -200,6 +217,7 @@ export default function BookedClassroom(){
         document.getElementById(classroomName+":"+period).style.backgroundColor="#66B3FF"
         document.getElementById(classroomName+"btn").hidden=false
         setSelectedBtn({
+          date:date,
           classroomName:classroomName,
           periodList:[period]
         })
@@ -215,6 +233,7 @@ export default function BookedClassroom(){
             document.getElementById(classroomName+":"+period).style.backgroundColor=""
             document.getElementById(classroomName+"btn").hidden=(selectedBtn.periodList.length===0)?true:false
             setSelectedBtn({
+              date:date,
               classroomName:(selectedBtn.periodList.length===0)?"":classroomName,
               periodList:selectedBtn.periodList
             }) 
@@ -228,6 +247,7 @@ export default function BookedClassroom(){
             if(selectedBtn.periodList.includes(period-1)||selectedBtn.periodList.includes(period+1)){
               document.getElementById(classroomName+":"+period).style.backgroundColor="#66B3FF"
               setSelectedBtn({
+                date:date,
                 classroomName:classroomName,
                 periodList:[...selectedBtn.periodList, period].sort()
               })
@@ -270,20 +290,21 @@ export default function BookedClassroom(){
                       value = {dayjs(date+1)}
                       shouldDisableDate={(date)=>{
                           return date.date()>new Date().getDate()+7}}
+                      formatDate={(date) => moment(date).format('DD-MM-YYYY')}
                       onChange={(newDate) => {
-                        console.log(newDate)
+                        newDate = moment(new Date(newDate.year(),newDate.month(),newDate.date())).format('YYYY-MM-DD')
                         setDate(newDate)}}
                   />
                 </DemoItem>
                 <DemoItem>
-                  <DesktopTimePicker  
+                  <TimePicker  
                     // timeSteps={{minutes:30}}
                     label="時段"
                     ampm={false}
                     minTime={moment("9:00", "HH:mm")}
                     maxTime={moment("21:00", "HH:mm")}
                     views={["hours"]}
-                    format='HH:MM'
+                    format='hh:ss'
                     // defaultValue={dayjs("0000-00-00T9:00")}
                     onChange={(newTime)=>{
                       console.log(newTime)
