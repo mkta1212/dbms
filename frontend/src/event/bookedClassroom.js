@@ -183,7 +183,7 @@ function filter(classroomList,time){
     return result.flat()
 }
 export default function BookedClassroom(){
-    const [date, setDate] = useState( moment(new Date()).format('YYYY-MM-DD'));
+    const [date, setDate] = useState( moment(new Date()).format('2023-11-01'));
     const [time, setTime] = useState(0);
     const [loading, setLoading] = useState(false);
     const [AllClassroomList, setAllClassroomList] = useState(new Map());
@@ -209,6 +209,11 @@ export default function BookedClassroom(){
     },[date])
 
     useEffect(()=>{
+      setSelectedBtn({
+        date:date,
+        classroomName:"",
+        periodList:[]
+      })
       setClassroomList(formList(filter(AllClassroomList,time)))
     }, [time])
 

@@ -68,39 +68,51 @@ public class DataLoader implements CommandLineRunner {
             roleImpl.createRole(new Role(ERole.ROLE_ADMIN));
     }
         
-
+        Random r = new Random();
         if (userImpl.count() == 0) {
-            for(int i=1; i<=100; i++){
-                User user = new User(Integer.toString(i*111111), Integer.toString(i*111111)+"gmail.com", encoder.encode(Integer.toString(i*111111)));
-                Role modRole = roleImpl.getByName(ERole.ROLE_ADMIN)
-                                .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-                Set<Role> role1 = new HashSet<>();
-                role1.add(modRole);
-                user.setRoles(role1);
-                userImpl.createUser(user);
-                autoGenerateEvent(user);
+            for(int i=0; i<=3000; i++){
+                String name = Integer.toString(r.nextInt(999999-100000+1)+100000);
+                if(!userImpl.existsByUsername(name)){
+                    User user = new User(name, name+"@gmail.com", encoder.encode(name));
+                    Role modRole = roleImpl.getByName(ERole.ROLE_ADMIN)
+                                    .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+                    Set<Role> role1 = new HashSet<>();
+                    role1.add(modRole);
+                    user.setRoles(role1);
+                    userImpl.createUser(user);
+                    // autoGenerateEvent(user);
+                }
+                
                 
             }           
 
         }
-        // User user1 = userImpl.getByUsername("111111").get();
-        // autoGenerateEvent(user1);
-        findBookedTime();
-        findBookedClassroom();
+        createALot();
+        // findBookedTime();
+        // findBookedClassroom();
     }
-
+    public void createALot(){
+        List<User> userList = userImpl.getAllUsers();
+        for(User user : userList){
+            try {
+                autoGenerateEvent(user);
+            } catch (ParseException e) {
+                continue;
+            }
+        }
+    }
     public void autoGenerateEvent (User user) throws ParseException{
         long courseCount = courseImpl.count();
         long classroomCount = classroomImpl.count();
         Random r = new Random();
         DateFormat df = new SimpleDateFormat("yyyy/MM/dd");
-        Date today = new Date(df.parse("2023/10/25").getTime());
-        for(int j=0; j<120; j++){
+        Date today = new Date(new java.util.Date().getTime());
+        for(int j=0; j<150; j++){
                     long courseId = r.nextLong(courseCount);
                     try{
                         Course course = courseImpl.getByCourseId(courseId).get();
-                        int day = r.nextInt(7)+1;
-                        Date eventDate = new Date(today.getTime()+ 1000 * 60 * 60 * 24 *day);
+                        int day = r.nextInt(60)+1;
+                        Date eventDate = new Date(today.getTime() - 1000 * 60 * 60 * 24 *day);
                         List<Integer> periodList = new ArrayList<Integer>();
                         int periodLen = r.nextInt(3);
                         int period = r.nextInt(13)+8;
@@ -112,7 +124,7 @@ public class DataLoader implements CommandLineRunner {
                                 .orElseThrow(() -> new RuntimeException("Error: Classroom is not found."));
                         if(eventPeriodImpl.checkTimeAvailable(classroom,eventDate,periodList)){
                             // StudyEvent studyEvent = new StudyEvent(user, course, classroom,eventDate, "", Status.Ongoing);
-                            StudyEvent studyEvent = new StudyEvent(user, course, "", Status.Ongoing);
+                            StudyEvent studyEvent = new StudyEvent(user, course, "", Status.Finished);
                             eventImpl.createEvent(studyEvent);
                             for(int p=0; p<=periodLen; p++){
                                 // StudyEventPeriod eventPeriod = new StudyEventPeriod(studyEvent, period+p);

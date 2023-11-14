@@ -1,5 +1,6 @@
 package backend.dbms.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 import backend.dbms.models.User;
@@ -14,4 +15,6 @@ public interface UserService {
     void createUser(User user);
 
     long count();
+
+    List<User> getAllUsers();
 }
