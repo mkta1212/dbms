@@ -12,15 +12,19 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import backend.dbms.models.StudyEvent;
+import backend.dbms.models.StudyEventPeriod;
 import backend.dbms.Service.Impl.StudyEventImpl;
+import backend.dbms.controllers.DTO.StudyEventDTO;
 import backend.dbms.controllers.Request.StudyEventReq;
 import backend.dbms.models.Status;
 import backend.dbms.models.User;
 import backend.dbms.repository.UserDao;
 import backend.dbms.security.jwt.JwtUtils;
+import jakarta.persistence.Tuple;
 
 @RestController
 @RequestMapping("/api")
@@ -36,18 +40,19 @@ public class StudyEventController {
     @Autowired
     private JwtUtils jwtUtils;
 
-    @GetMapping("/studyEvents")
+    @GetMapping("/allstudyEvents")
     public List<StudyEvent> studyEvents() {
         return eventImpl.getAllGroups();
     }
-    @GetMapping("/studyEvents?status={status}")
-    @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
-    public List<StudyEvent> onGoingStudyEvents(@PathVariable String status) {
-        if (status == "ongoing"){
+    @GetMapping("/studyEvents")
+    // @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
+    public List<StudyEventDTO> onGoingStudyEvents(@RequestParam String status) {
+        if (status.equals("ongoing")){
             return eventImpl.getAvailableEvent();
         }
         else{
-            return eventImpl.getByStatus(Status.Finished);
+            // return eventImpl.getByStatus(Status.Finished);
+            return null;
         }
        
     }

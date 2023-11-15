@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import backend.dbms.Service.StudyEventService;
+import backend.dbms.controllers.DTO.StudyEventDTO;
 import backend.dbms.controllers.Request.StudyEventReq;
 import backend.dbms.models.Classroom;
 import backend.dbms.models.Course;
@@ -16,6 +17,8 @@ import backend.dbms.models.StudyEvent;
 import backend.dbms.models.StudyEventPeriod;
 import backend.dbms.models.User;
 import backend.dbms.repository.StudyEventDao;
+import backend.dbms.repository.StudyEventPeriodDao;
+import jakarta.persistence.Tuple;
 import backend.dbms.repository.EventId;
 import lombok.NoArgsConstructor;
 
@@ -30,21 +33,24 @@ public class StudyEventImpl implements StudyEventService {
 
 
     @Autowired
-    private StudyEventPeriodImpl eventPeriodImpl;
+    private StudyEventPeriodDao eventPeriodDao;
 
     @Autowired
     private ClassroomImpl classroomImpl;
 
     @Override
     public List<StudyEvent> getByStatus(Status status){
-        return eventDao.findByStatus(status);
+        return null;
     }
 
     @Override
-    public List<StudyEvent> getAvailableEvent(){
+    public List<StudyEventDTO> getAvailableEvent(){
         Date date = new Date(new java.util.Date().getTime());
-        return eventDao.findByEventIdJoinStudyEventPeriod(date,Status.Ongoing);
-
+        // List<StudyEvent> event = eventPeriodDao.findAllByEventDateBetween(date,new Date(date.getTime()+1000*60*60*24*7));
+        System.err.println(date);
+        System.err.println(new Date(date.getTime()+1000*60*60*24*7));
+        List<StudyEventDTO> event = eventDao.findByEventIdJoinStudyEventPeriod(date,new Date(date.getTime()+1000*60*60*24*7),Status.Ongoing);
+        return event;
     }
 
     @Override
@@ -70,7 +76,7 @@ public class StudyEventImpl implements StudyEventService {
         eventDao.save(event);
         for(Integer period: eventReq.getPeriodList()){
             StudyEventPeriod eventPeriod = new StudyEventPeriod(event,classroom,eventReq.getEventDate(),period);
-            eventPeriodImpl.createEventPeriod(eventPeriod);
+            eventPeriodDao.save(eventPeriod);
         }
     }
 

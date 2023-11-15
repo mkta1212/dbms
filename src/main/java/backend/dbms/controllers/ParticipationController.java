@@ -50,7 +50,7 @@ public class ParticipationController {
     public void createParticipant(@RequestHeader("Authorization") String token,@RequestBody StudyEvent event){
         String userName = jwtUtils.getUserNameFromJwtToken(token.substring(7, token.length()));
         User user = userImpl.getByUsername(userName).get();
-        event = eventImpl.getByEventId(event.getEventId()).get();
+        // event = eventImpl.getByEventId(event.getEventId()).get();
         Date date = new Date();
         Participation participantion = new Participation(user,event,date);
         participationImpl.createParticipation(participantion);

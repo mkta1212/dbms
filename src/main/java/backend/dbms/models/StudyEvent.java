@@ -52,8 +52,8 @@ public class StudyEvent {
     // @JoinColumn(name="classroom_id")
     // private Classroom classroom;
 
-    // @OneToMany
-    // private Set<Participant> participantList = new HashSet<>();
+    @OneToMany(mappedBy = "event", cascade = CascadeType.PERSIST)
+    private List<StudyEventPeriod> eventPeriods;
 
     // @NonNull
     // @Column(name = "event_date")

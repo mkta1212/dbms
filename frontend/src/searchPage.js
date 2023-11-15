@@ -95,7 +95,11 @@ function Row (props) {
 
 
 async function searchEvent () {
-  return await axios.get('http://localhost:8080/api/studyEvents?status=ongoing', { headers: authHeader() })
+  return await axios.get('http://localhost:8080/api/studyEvents', { 
+    params:{
+      status:'ongoing'
+    },
+    headers: authHeader() })
     .then((data) => { return data.data })
 }
 async function SearchParticipation () {

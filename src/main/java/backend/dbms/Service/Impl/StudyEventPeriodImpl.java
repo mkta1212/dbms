@@ -54,6 +54,11 @@ public class StudyEventPeriodImpl implements StudyEventPeriodService {
     }
 
     @Override
+    public List<StudyEvent> getEventByDate(Date date){
+        return eventPeriodDao.findAllByEventDateBetween(date,new Date(date.getTime() + 1000 * 60 * 60 * 24 *7));
+    }
+
+    @Override
     // 七天內指定教室被預約的時間
     public int[][] findBookedTime(Classroom classroom, Date date){
         int[][] periodList = new int[8][24];
