@@ -38,12 +38,12 @@ public class StudyEvent {
     
     @NonNull
     @JsonBackReference
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="user_id")
     private User holder;
 
     @NonNull
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="course_id")
     private Course course;
 
@@ -79,9 +79,11 @@ public class StudyEvent {
     // public void addParticipant(Participant participant){
     //     participantList.add(participant);
     // }
-    public StudyEvent(  int userMax, String content){
+    public StudyEvent(User holder, Course course, int userMax, String content, Status status){
+        this.holder = holder;
+        this.course = course;
         this.userMax = userMax;
         this.content = content;
-        
+        this.status = status;
     }
 }

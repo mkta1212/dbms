@@ -11,4 +11,5 @@ public interface ClassroomService {
     Optional<Classroom> getByClassroomId(Long id);
     List<Classroom> getAllClassroom();
     List<Pair> findBookedClassroom(Date date);
+    public Optional<Classroom> getByClassroomName(String roomName);
 }

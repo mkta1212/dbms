@@ -20,10 +20,10 @@ import backend.dbms.models.StudyEvent;
 import backend.dbms.Service.Impl.ParticipationImpl;
 import backend.dbms.Service.Impl.StudyEventImpl;
 import backend.dbms.Service.Impl.UserImpl;
-import backend.dbms.models.Participantion;
+import backend.dbms.models.Participation;
 import backend.dbms.models.Status;
 import backend.dbms.models.User;
-import backend.dbms.repository.ParticipantionDao;
+import backend.dbms.repository.ParticipationDao;
 import backend.dbms.repository.UserDao;
 import backend.dbms.security.jwt.JwtUtils;
 import jakarta.transaction.Transactional;
@@ -31,7 +31,7 @@ import jakarta.transaction.Transactional;
 @RestController
 @RequestMapping("/api")
 @CrossOrigin(origins = "*", maxAge = 3600)
-public class ParticipantController {
+public class ParticipationController {
 
     @Autowired
     private JwtUtils jwtUtils;
@@ -52,13 +52,13 @@ public class ParticipantController {
         User user = userImpl.getByUsername(userName).get();
         event = eventImpl.getByEventId(event.getEventId()).get();
         Date date = new Date();
-        Participantion participantion = new Participantion(user,event,date);
+        Participation participantion = new Participation(user,event,date);
         participationImpl.createParticipation(participantion);
     }
 
     @GetMapping("/joins")
     @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
-    public List<Participantion> findMyParticipation(@RequestHeader("Authorization") String token){
+    public List<Participation> findMyParticipation(@RequestHeader("Authorization") String token){
         String userName = jwtUtils.getUserNameFromJwtToken(token.substring(7, token.length()));
         User user = userImpl.getByUsername(userName).get();
         return participationImpl.getByUser(user);

@@ -27,7 +27,7 @@ import backend.dbms.models.Course;
 import backend.dbms.models.ERole;
 import backend.dbms.models.StudyEvent;
 import backend.dbms.models.StudyEventPeriod;
-import backend.dbms.models.Participantion;
+import backend.dbms.models.Participation;
 // import backend.dbms.models.ParticipantId;
 import backend.dbms.models.Role;
 import backend.dbms.models.Status;
@@ -87,7 +87,7 @@ public class DataLoader implements CommandLineRunner {
             }           
 
         }
-        createALot();
+        // createALot();
         // findBookedTime();
         // findBookedClassroom();
     }

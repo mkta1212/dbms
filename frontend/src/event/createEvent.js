@@ -44,26 +44,6 @@ function CourseRow(props){
     setSelectedCourse(course)
   }
 
-  const theme = createTheme({
-    components: {
-      // Name of the component
-      MuiTablePagination: {
-        displayedRows: {
-          variant:[
-            {
-              style:{
-                color:'red',
-                display:'flex'
-              }
-            }
-          ]
-          
-          
-        },
-      },
-    },
-  });
-
   useEffect(()=>{
     columnName.set('courseName',"課程名稱")
     columnName.set('instructorName', '教師名稱')
@@ -95,7 +75,7 @@ function CourseRow(props){
                     <TableCell padding="checkbox">
                       <Radio
                         color="primary" 
-                        checked={selectedCourse.courseId===course.courseId}
+                        checked={selectedCourse&&selectedCourse.courseId===course.courseId}
                         onChange={()=>{selectCourse(course)}}
                       />
                     </TableCell>
@@ -141,11 +121,10 @@ function CourseRow(props){
 export default function CreateEvent (){
 
     const[courseList, setCourseList] = useState()
-    const[selectedCourse, setSelectedCourse] = useState({})
+    const[selectedCourse, setSelectedCourse] = useState(undefined)
     const[roomName, setRoomName] = useState('')
     const[date, setDate] = useState('')
     const[periodList, setPeriodList] = useState([])
-    const[eventName,setEventName] = useState('')
     const[max, setMax] = useState('')
     const[content, setContent] = useState('')
     
@@ -178,16 +157,22 @@ export default function CreateEvent (){
       e.preventDefault()
       const event = {
         roomName,
+        userMax:max,
+        content,
+        eventDate: date,
+        courseId:selectedCourse.courseId,
         periodList,
-        eventName,
-        max,
-        content
+        
     
       }
       console.log(event)
-      // await axios.post('http://localhost:8080/api/events',event ,{ headers: authHeader() }).then(data => {
-      //   console.log('Success:', data)
-      // })
+      await axios.post('http://localhost:8080/api/studyEvents',event ,{ headers: authHeader() }).then(data => {
+        console.log('Success:', data)
+      })
+      .then(()=>{
+        alert("成功新增")
+        window.location.href='/home'
+      })
     //   navigate('/')
     };
 
@@ -241,21 +226,15 @@ export default function CreateEvent (){
                 </h5>
                 <div className='card-body'>
                     <div className='row'>
-                        <div className='col-md-4'>
-                            <div className='form-group'>
-                                <label htmlFor='name'>活動名稱</label>
+                      <div className='col-md-4'>
+                          <div className='form-group'>
+                                <label htmlFor='name'>課程</label>
                             </div>
                             <div className='col'>
-                                <input
-                                type='text'
-                                id='name'
-                                size='big'
-                                className='form-control'
-                                onChange={(e)=>setEventName(e.target.value)}
-                                />
+                               {selectedCourse?selectedCourse.courseName:"尚未選擇課程"}
                             </div>
-                        </div>
-                        <div className='col-md-4'>
+                      </div>
+                      <div className='col-md-4'>
                             <div className='form-group'>
                                 <label htmlFor='name'>活動人數上限</label>
                             </div>

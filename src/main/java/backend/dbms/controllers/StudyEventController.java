@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import backend.dbms.models.StudyEvent;
 import backend.dbms.Service.Impl.StudyEventImpl;
+import backend.dbms.controllers.Request.StudyEventReq;
 import backend.dbms.models.Status;
 import backend.dbms.models.User;
 import backend.dbms.repository.UserDao;
@@ -24,7 +25,7 @@ import backend.dbms.security.jwt.JwtUtils;
 @RestController
 @RequestMapping("/api")
 @CrossOrigin(origins = "*", maxAge = 3600)
-public class StudyGroupController {
+public class StudyEventController {
 
     @Autowired
     private StudyEventImpl eventImpl;
@@ -35,33 +36,31 @@ public class StudyGroupController {
     @Autowired
     private JwtUtils jwtUtils;
 
-    @GetMapping("/studyGroups")
-    public List<StudyEvent> studyGroups() {
+    @GetMapping("/studyEvents")
+    public List<StudyEvent> studyEvents() {
         return eventImpl.getAllGroups();
     }
-    @GetMapping("/studyGroups?status={status}")
+    @GetMapping("/studyEvents?status={status}")
     @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
-    public List<StudyEvent> inProgressStudyGroups(@PathVariable String status) {
-        if (status == "in_progress"){
-            return eventImpl.getByStatus(Status.Ongoing);
+    public List<StudyEvent> onGoingStudyEvents(@PathVariable String status) {
+        if (status == "ongoing"){
+            return eventImpl.getAvailableEvent();
         }
         else{
             return eventImpl.getByStatus(Status.Finished);
         }
        
     }
-    @PostMapping("/studyGroups")
+    @PostMapping("/studyEvents")
     @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
-    public void createStudyGroup(@RequestHeader("Authorization") String token,@RequestBody StudyEvent event){
+    public void createStudyEvent(@RequestHeader("Authorization") String token,@RequestBody StudyEventReq event){
         String userName = jwtUtils.getUserNameFromJwtToken(token.substring(7, token.length()));
         User user = userRepository.findByUsername(userName).get();
-        event.setHolder(user);
-        event.setStatus(Status.Ongoing);;
-        eventImpl.createEvent(event);
+        eventImpl.createEvent(event,user);
     }
-    @GetMapping("/mystudyGroups")
+    @GetMapping("/mystudyEvents")
     @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
-    public List<StudyEvent> mystudyGroups(@RequestHeader("Authorization") String token) {
+    public List<StudyEvent> mystudyEvents(@RequestHeader("Authorization") String token) {
         String userName = jwtUtils.getUserNameFromJwtToken(token.substring(7, token.length()));
         User user = userRepository.findByUsername(userName).get();
         return eventImpl.getByHolder(user);

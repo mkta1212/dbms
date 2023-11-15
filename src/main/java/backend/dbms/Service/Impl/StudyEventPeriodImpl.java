@@ -22,11 +22,6 @@ import lombok.NoArgsConstructor;
 @Service
 public class StudyEventPeriodImpl implements StudyEventPeriodService {
 
-    @Autowired
-    private StudyEventImpl studyEventImpl;
-
-    @Autowired
-    private ClassroomImpl classroomImpl;
 
     @Autowired
     private StudyEventPeriodDao eventPeriodDao;

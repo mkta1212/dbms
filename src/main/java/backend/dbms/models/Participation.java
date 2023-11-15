@@ -10,11 +10,11 @@ import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 
 @Entity
-@Table(name = "participantion")
+@Table(name = "participation")
 @AllArgsConstructor
 @RequiredArgsConstructor
 @Data
-public class Participantion {
+public class Participation {
      
     
 
@@ -42,7 +42,7 @@ public class Participantion {
 
     // private String feedback;
 
-    public Participantion(User user, StudyEvent event, Date joinTime) {
+    public Participation(User user, StudyEvent event, Date joinTime) {
         this.user = user;
         this.event  = event;
         this.joinTime = joinTime;

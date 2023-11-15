@@ -8,9 +8,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import backend.dbms.Service.StudyEventService;
+import backend.dbms.controllers.Request.StudyEventReq;
 import backend.dbms.models.Classroom;
+import backend.dbms.models.Course;
 import backend.dbms.models.Status;
 import backend.dbms.models.StudyEvent;
+import backend.dbms.models.StudyEventPeriod;
 import backend.dbms.models.User;
 import backend.dbms.repository.StudyEventDao;
 import backend.dbms.repository.EventId;
@@ -22,9 +25,26 @@ public class StudyEventImpl implements StudyEventService {
     @Autowired
     private StudyEventDao eventDao;
 
+    @Autowired
+    private CourseImpl courseImpl;
+
+
+    @Autowired
+    private StudyEventPeriodImpl eventPeriodImpl;
+
+    @Autowired
+    private ClassroomImpl classroomImpl;
+
     @Override
     public List<StudyEvent> getByStatus(Status status){
         return eventDao.findByStatus(status);
+    }
+
+    @Override
+    public List<StudyEvent> getAvailableEvent(){
+        Date date = new Date(new java.util.Date().getTime());
+        return eventDao.findByEventIdJoinStudyEventPeriod(date,Status.Ongoing);
+
     }
 
     @Override
@@ -40,6 +60,18 @@ public class StudyEventImpl implements StudyEventService {
     @Override
     public void createEvent(StudyEvent event){
         eventDao.save(event);
+    }
+
+    @Override
+    public void createEvent(StudyEventReq eventReq,User user){
+        Course course = courseImpl.getByCourseId(eventReq.getCourseId()).get();
+        StudyEvent event = new StudyEvent(user, course, eventReq.getUserMax(), eventReq.getContent(),Status.Ongoing);
+        Classroom classroom = classroomImpl.getByClassroomName(eventReq.getRoomName()).get();
+        eventDao.save(event);
+        for(Integer period: eventReq.getPeriodList()){
+            StudyEventPeriod eventPeriod = new StudyEventPeriod(event,classroom,eventReq.getEventDate(),period);
+            eventPeriodImpl.createEventPeriod(eventPeriod);
+        }
     }
 
     @Override

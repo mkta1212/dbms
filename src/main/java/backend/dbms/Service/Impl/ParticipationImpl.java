@@ -6,10 +6,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import backend.dbms.Service.ParticipationService;
-import backend.dbms.models.Participantion;
+import backend.dbms.models.Participation;
 import backend.dbms.models.StudyEvent;
 import backend.dbms.models.User;
-import backend.dbms.repository.ParticipantionDao;
+import backend.dbms.repository.ParticipationDao;
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
@@ -17,10 +17,10 @@ import lombok.NoArgsConstructor;
 public class ParticipationImpl implements ParticipationService {
 
     @Autowired
-    private ParticipantionDao participantionDao;
+    private ParticipationDao participantionDao;
 
     @Override
-    public List<Participantion> getByUser(User user) {
+    public List<Participation> getByUser(User user) {
         return participantionDao.findByUser(user);
     }
 
@@ -35,7 +35,7 @@ public class ParticipationImpl implements ParticipationService {
     }
     
     @Override
-    public void createParticipation(Participantion participantion){
+    public void createParticipation(Participation participantion){
         participantionDao.save(participantion);
     }
 }

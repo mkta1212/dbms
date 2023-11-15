@@ -24,10 +24,7 @@ public class ClassroomImpl implements ClassroomService {
 
     @Autowired
     private ClassroomDao classroomDao;
-
-    @Autowired
-    private StudyEventImpl studyEventImpl;
-
+    
     @Autowired
     private StudyEventPeriodDao eventPeriodDao;
 
@@ -38,6 +35,11 @@ public class ClassroomImpl implements ClassroomService {
     @Override
     public Optional<Classroom> getByClassroomId(Long id) {
         return classroomDao.findById(id);
+    }
+
+    @Override
+    public Optional<Classroom> getByClassroomName(String roomName) {
+        return classroomDao.findByRoomName(roomName);
     }
 
     @Override
@@ -52,12 +54,16 @@ public class ClassroomImpl implements ClassroomService {
             int[] periodList = new int[24];
             classroomMap.put(classroom.getClassroomId(),periodList);
         }
+        System.err.println("1");
         List<StudyEventPeriod> eventPeriodList = eventPeriodDao.findByEventDate(date);
+        System.err.println("2");
         for(StudyEventPeriod eventPeriod: eventPeriodList){
+        //   System.err.println("2");
             int[] periodList = classroomMap.get(eventPeriod.getClassroom().getClassroomId());
             periodList[eventPeriod.getEventPeriod()] = 1;
-            classroomMap.put(eventPeriod.getEvent().getEventId(),periodList);
+            // classroomMap.put(eventPeriod.getEvent().getEventId(),periodList);
         }
+        System.err.println("3");
         List<Pair> bookedList = new ArrayList<Pair>();
         for(Classroom classroom: classroomList){
                 int[] periodList = classroomMap.get(classroom.getClassroomId());

@@ -1,4 +1,4 @@
-package backend.dbms.controllers.Response;
+package backend.dbms.controllers.Request;
 
 import java.sql.Date;
 

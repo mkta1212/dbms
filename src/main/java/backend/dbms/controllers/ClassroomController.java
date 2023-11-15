@@ -23,7 +23,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import backend.dbms.Service.Pair;
 import backend.dbms.Service.Impl.ClassroomImpl;
 import backend.dbms.Service.Impl.StudyEventPeriodImpl;
-import backend.dbms.controllers.Response.ResDate;
+import backend.dbms.controllers.Request.ResDate;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
