@@ -1,9 +1,12 @@
 package backend.dbms.controllers;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,6 +23,7 @@ import backend.dbms.models.StudyEventPeriod;
 import backend.dbms.Service.Impl.StudyEventImpl;
 import backend.dbms.controllers.DTO.StudyEventDTO;
 import backend.dbms.controllers.Request.StudyEventReq;
+import backend.dbms.controllers.Response.EventResponse;
 import backend.dbms.models.Status;
 import backend.dbms.models.User;
 import backend.dbms.repository.UserDao;
@@ -46,14 +50,14 @@ public class StudyEventController {
     }
     @GetMapping("/studyEvents")
     // @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
-    public List<StudyEventDTO> onGoingStudyEvents(@RequestParam String status) {
-        if (status.equals("ongoing")){
-            return eventImpl.getAvailableEvent();
-        }
-        else{
-            // return eventImpl.getByStatus(Status.Finished);
-            return null;
-        }
+    public EventResponse onGoingStudyEvents(@RequestParam int page, @RequestParam int row) {
+        // return eventImpl.getAvailableEvent(0,10).getContent();
+        Page<StudyEventDTO> eventDTO = eventImpl.getAvailableEvent(page,row);
+        // Map <Integer,List<StudyEventDTO>> result = new HashMap<>();
+        // result.put(eventDTO.getTotalPages(), eventDTO.getContent());
+        
+        return new EventResponse(eventDTO.getContent(),eventDTO.getTotalPages());
+  
        
     }
     @PostMapping("/studyEvents")

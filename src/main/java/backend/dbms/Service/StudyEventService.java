@@ -4,6 +4,8 @@ import java.sql.Date;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.Page;
+
 import backend.dbms.controllers.DTO.StudyEventDTO;
 import backend.dbms.controllers.Request.StudyEventReq;
 import backend.dbms.models.Classroom;
@@ -22,7 +24,7 @@ public interface StudyEventService {
     void createEvent(StudyEventReq event,User user);
     Optional<StudyEvent> getByEventId(Long id);
     long count();
-    public List<StudyEventDTO> getAvailableEvent();
+    Page<StudyEventDTO> getAvailableEvent(int page, int row);
     // List<StudyEvent> getByClassroomAndDate(Classroom classroom, Date date);
     // List<EventId> getBookedPeriod(Classroom classroom, Date date);
     // List<StudyEvent> getByDateRange(Date startDate, Date endDate);

@@ -17,11 +17,22 @@ import axios from 'axios';
 import authHeader from './services/auth-header';
 import { useEffect, useState } from 'react'
 import { NavLink } from 'react-bootstrap'
+import Pagination from '@mui/material/Pagination';
+import PaginationItem from '@mui/material/PaginationItem';
+import Stack from '@mui/material/Stack';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
+import MenuItem from '@mui/material/MenuItem';
+import Select from '@mui/material/Select';
+import CircularProgress from '@mui/material/CircularProgress';
+import FormControl from '@mui/material/FormControl';
+
 
 function Row (props) {
   const { row } = props
   const event = row[0]
   const myParticipation = row[1]
+  console.log(event)
   // 設定使用者下拉式選單開闔
   const [open, setOpen] = useState(false)
 
@@ -56,11 +67,12 @@ function Row (props) {
           </IconButton>
         </TableCell>
         {/* 使用者資料 */}
-        <TableCell align='right'>{event.eventName}</TableCell>
+        <TableCell align='right'>{event.courseName}</TableCell>
+        <TableCell align='right'>{event.instructorName}</TableCell>
         <TableCell align='right'>{event.eventDate}</TableCell>
-        
-        <TableCell align='right'>{event.eventLocation}</TableCell>
-        <TableCell align='right'>{event.max}</TableCell>
+        <TableCell align='right'>{event.periodList[0]}:00 - {event.periodList[event.periodList.length-1]+1}:00</TableCell>
+        <TableCell align='right'>{event.roomName}</TableCell>
+        {/* <TableCell align='right'>{event.max}</TableCell> */}
         {/* <TableCell align='right'><Button onClick={() => { joinEvent(event.eventId) }}>參加活動</Button></TableCell> */}
         <TableCell align='right'>{btn(event.eventId,event.holderName,myParticipation)}</TableCell>
       </TableRow>
@@ -94,10 +106,12 @@ function Row (props) {
 }
 
 
-async function searchEvent () {
+async function searchEvent (page, row) {
+  console.log(row)
   return await axios.get('http://localhost:8080/api/studyEvents', { 
     params:{
-      status:'ongoing'
+      page:page,
+      row:row,
     },
     headers: authHeader() })
     .then((data) => { return data.data })
@@ -107,32 +121,25 @@ async function SearchParticipation () {
     .then((data) => { return data.data })
 }
 
-async function joinEvent (id) {
+async function joinEvent (eventId) {
   if (window.confirm('確定要參加？')) {
     const url = 'http://localhost:8080/api/joins'
-    await axios.post(url,{id},{ headers: authHeader() }).then((data) => {
+    await axios.post(url,{eventId},{ headers: authHeader() }).then((data) => {
       console.log(data)
     })
   }
 }
 
 async function formEvent (event) {
-  var eventDate;
-  if (event.date.includes("T")){
-    eventDate = event.date.split("T")[0]+" "+event.date.split("T")[1].split(".")[0]
-  
-  }
-  else{
-    eventDate = event.date
-  }
+  var periodList = JSON.parse("[" + event.periodList + "]");
   return {
-    eventId: event.id,
-    eventName: event.eventName,
-    eventLocation: event.location,
-    eventDate: eventDate,
+    courseName: event.courseName,
+    instructorName: event.instructorName,
+    roomName: event.roomName,
+    eventDate: event.eventDate,
     max: event.max,
     content: event.content,
-    holderName: event.userName
+    periodList: periodList
   }
 }
 
@@ -142,23 +149,32 @@ async function formParticipation (participation) {
 }
 
 export default function SearchPage () {
+  const [loading, setLoading] = useState(false);
   const [form, setForm] = useState([])
   const [myParticipation, setMyParticipation] = useState([])
-  const fetchData = async () => {
-    const events = await searchEvent()
+  const [page, setPage] = useState(0)
+  const [row, setRow] = useState(10)
+  const [totalPage, setTotalPage] = useState(0)
+  const fetchData = async (page, row) => {
+    const response = await searchEvent(page, row)
     // const participations = await SearchParticipation()
-    console.log(events)
+    console.log(response)
+    const totalPage = response.totalPage
+    const events=  response.eventDTO
+    setTotalPage(totalPage)
     const eventList = await Promise.all(events.map((event) => (formEvent(event))))
     return eventList
   }
   useEffect(() => {
-    fetchData().then((res) => {
+    setLoading(true)
+    fetchData(page,row).then((res) => {
       setForm(res)
+      setLoading(false)
     })
       .catch((e) => {
         console.log(e.message)
       })
-  }, [])
+  }, [page,row])
 
   const fetchJoin = async () => {
     const participations = await SearchParticipation()
@@ -167,9 +183,11 @@ export default function SearchPage () {
     return participationList
   }
   useEffect(() => {
+    
     fetchJoin().then((res) => {
       console.log(res)
       setMyParticipation(res)
+      
     })
       .catch((e) => {
         console.log(e.message)
@@ -178,23 +196,74 @@ export default function SearchPage () {
 
   return (
     <>
-      <TableContainer component={Paper}>
-        <Table aria-label='collapsible table'>
-          <TableHead>
-            <TableRow>
-              <TableCell />
-              <TableCell align='right'>活動名稱</TableCell>
-              <TableCell align='right'>活動時間</TableCell>
-              <TableCell align='right'>活動地點</TableCell>
-              <TableCell align='right'>活動人數上限</TableCell>
-              <TableCell align='right' />
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {form.map((event)=><Row key={event.eventId} row={[event,myParticipation]} />)}
-          </TableBody>
-        </Table>
-      </TableContainer>
+    {loading?
+        <Box
+          paddingTop={20}
+          display="flex"
+          justifyContent="center"
+          alignItems="center"
+        >
+          <CircularProgress size={100} />
+        </Box>
+        :
+        (
+          <>
+          
+          <TableContainer component={Paper}>
+            <Table aria-label='collapsible table'>
+              <TableHead>
+                <TableRow>
+                  <TableCell />
+                  <TableCell align='right'>課程名稱</TableCell>
+                  <TableCell align='right'>授課老師</TableCell>
+                  <TableCell align='right'>活動日期</TableCell>
+                  <TableCell align='right'>活動時段</TableCell>
+                  <TableCell align='right'>活動地點</TableCell>
+                  <TableCell align='right'></TableCell>
+                  {/* <TableCell align='right' /> */}
+                  <TableCell align='right'>
+                  <FormControl sx={{ m: 1}} size="small">
+                  
+                    <Select
+                      autoWidth={true}
+                      value={row}
+                      onChange={(value)=>setRow(value.target.value)}
+                      sx={{width:80}}
+                    >
+                      <MenuItem value={10} >10</MenuItem>
+                      <MenuItem value={25}>25</MenuItem>
+                      <MenuItem value={50}>50</MenuItem>
+                    </Select>
+                    
+                  </FormControl>
+                  </TableCell>
+                  
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {form.map((event)=><Row key={event.eventId} row={[event,myParticipation]} />)}
+              </TableBody>
+            </Table>
+            <Box display='flex' justifyContent='center'>
+            <Stack spacing={2}>
+              <Pagination
+                count={totalPage}
+                onChange={(event,num)=>setPage(num)}
+                page={page+1}
+                renderItem={(item) => (
+                  <PaginationItem
+                  
+                    slots={{ previous: ArrowBackIcon, next: ArrowForwardIcon }}
+                    {...item}
+                  />
+                )}
+              />
+            </Stack>
+            </Box>
+          </TableContainer>
+        </>
+        )
+      }
     </>
   )
 }

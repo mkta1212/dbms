@@ -5,6 +5,10 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import backend.dbms.Service.StudyEventService;
@@ -44,12 +48,13 @@ public class StudyEventImpl implements StudyEventService {
     }
 
     @Override
-    public List<StudyEventDTO> getAvailableEvent(){
+    public Page<StudyEventDTO> getAvailableEvent(int page, int row){
         Date date = new Date(new java.util.Date().getTime());
         // List<StudyEvent> event = eventPeriodDao.findAllByEventDateBetween(date,new Date(date.getTime()+1000*60*60*24*7));
         System.err.println(date);
         System.err.println(new Date(date.getTime()+1000*60*60*24*7));
-        List<StudyEventDTO> event = eventDao.findByEventIdJoinStudyEventPeriod(date,new Date(date.getTime()+1000*60*60*24*7),Status.Ongoing);
+        Pageable pageable = PageRequest.of(page,row, Sort.by("id"));
+        Page<StudyEventDTO> event = eventDao.findByEventIdJoinStudyEventPeriod(date,new Date(date.getTime()+1000*60*60*24*7),Status.Ongoing, pageable);
         return event;
     }
 

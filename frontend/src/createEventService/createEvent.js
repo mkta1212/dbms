@@ -146,14 +146,6 @@ export default function CreateEvent (){
     }
 
     async function HandleClick (e) {
-      // const bookedInfo = JSON.parse(sessionStorage.getItem("bookedInfo"))
-      // console.log(bookedInfo)
-      // const roomNumber = bookedInfo.roomNumber
-      // const eventName = document.getElementById('name').value
-      // const date = document.getElementById('date').value
-      // const location = document.getElementById('location').value
-      // const max = document.getElementById('max').value
-      // const content = document.getElementById('content').value
       e.preventDefault()
       const event = {
         roomName,

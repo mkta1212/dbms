@@ -29,4 +29,5 @@ public interface StudyEventDTO {
     String getRoomName();
     String getCourseName();
     String getInstructorName();
+    String getContent();
 }
