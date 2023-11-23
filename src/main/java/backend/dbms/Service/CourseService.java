@@ -10,4 +10,5 @@ public interface CourseService {
     Optional<Course> getByCourseId(Long id);
     Long count();
     List<Course> searchByCourseOrInstructor(String courseName, String instructorName);
+    List<String> getAllCoursesName();
 }

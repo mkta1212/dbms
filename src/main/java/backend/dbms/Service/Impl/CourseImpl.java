@@ -38,6 +38,10 @@ public class CourseImpl implements CourseService {
         return courseDao.findByCourseNameLikeOrInstructorNameLike(courseName, instructorName);
     }
 
+    @Override
+    public List<String> getAllCoursesName(){
+        return courseDao.findAllCourseName();
+    }
     
     
 }

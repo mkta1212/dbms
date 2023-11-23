@@ -14,7 +14,6 @@ import backend.dbms.models.StudyEvent;
 import backend.dbms.models.StudyEventPeriod;
 import backend.dbms.models.User;
 import backend.dbms.repository.EventId;
-import jakarta.persistence.Tuple;
 
 public interface StudyEventService {
     List<StudyEvent> getByStatus(Status status);
@@ -25,6 +24,7 @@ public interface StudyEventService {
     Optional<StudyEvent> getByEventId(Long id);
     long count();
     Page<StudyEventDTO> getAvailableEvent(int page, int row);
+    Page<StudyEventDTO> getEventByMultiCon(User user,int page, int row, String courseName, Date date);
     // List<StudyEvent> getByClassroomAndDate(Classroom classroom, Date date);
     // List<EventId> getBookedPeriod(Classroom classroom, Date date);
     // List<StudyEvent> getByDateRange(Date startDate, Date endDate);

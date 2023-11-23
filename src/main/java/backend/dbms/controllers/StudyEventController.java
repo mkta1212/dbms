@@ -1,6 +1,8 @@
 package backend.dbms.controllers;
 
-import java.util.Date;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.sql.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,7 +30,6 @@ import backend.dbms.models.Status;
 import backend.dbms.models.User;
 import backend.dbms.repository.UserDao;
 import backend.dbms.security.jwt.JwtUtils;
-import jakarta.persistence.Tuple;
 
 @RestController
 @RequestMapping("/api")
@@ -50,12 +51,16 @@ public class StudyEventController {
     }
     @GetMapping("/studyEvents")
     // @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
-    public EventResponse onGoingStudyEvents(@RequestParam int page, @RequestParam int row) {
-        // return eventImpl.getAvailableEvent(0,10).getContent();
-        Page<StudyEventDTO> eventDTO = eventImpl.getAvailableEvent(page,row);
-        // Map <Integer,List<StudyEventDTO>> result = new HashMap<>();
-        // result.put(eventDTO.getTotalPages(), eventDTO.getContent());
+    public EventResponse  onGoingStudyEvents(@RequestHeader("Authorization") String token,@RequestParam int page, @RequestParam int row, @RequestParam(required = false) String courseName, @RequestParam(required = false) Date eventDate) throws UnsupportedEncodingException {
+        // Page<StudyEventDTO> eventDTO = eventImpl.getAvailableEvent(page,row);
+        String userName = jwtUtils.getUserNameFromJwtToken(token.substring(7, token.length()));
+        User user = userRepository.findByUsername(userName).get();
+        if (courseName!=null){
+            courseName = URLDecoder.decode(courseName, "UTF-8");
+        }
         
+        Page<StudyEventDTO> eventDTO = eventImpl.getEventByMultiCon(user,page,row,courseName,eventDate);
+        // return eventDTO;
         return new EventResponse(eventDTO.getContent(),eventDTO.getTotalPages());
   
        

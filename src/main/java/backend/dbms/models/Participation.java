@@ -14,25 +14,28 @@ import lombok.RequiredArgsConstructor;
 @AllArgsConstructor
 @RequiredArgsConstructor
 @Data
+@IdClass(ParticipationId.class)
 public class Participation {
      
     
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    // @Id
+    // @GeneratedValue(strategy = GenerationType.IDENTITY)
+    // private Long id;
 
     
 
     // @ManyToOne(cascade = {CascadeType.PERSIST,CascadeType.MERGE})
+    @PrimaryKeyJoinColumn(name = "user_id")
     @ManyToOne
-    @JoinColumn(name = "user_id")
+    @Id
     @NonNull
     private User user;
     
     // @ManyToOne(cascade = {CascadeType.PERSIST,CascadeType.MERGE})
+    @PrimaryKeyJoinColumn(name = "event_id")
     @ManyToOne
-    @JoinColumn(name = "event_id")
+    @Id
     @NonNull
     private StudyEvent event;
     
@@ -42,11 +45,11 @@ public class Participation {
 
     // private String feedback;
 
-    public Participation(User user, StudyEvent event, Date joinTime) {
-        this.user = user;
-        this.event  = event;
-        this.joinTime = joinTime;
-    }
+    // public Participation(User user, StudyEvent event, Date joinTime) {
+    //     this.user = user;
+    //     this.event  = event;
+    //     this.joinTime = joinTime;
+    // }
     public StudyEvent getEvent(){
         return event;
     }

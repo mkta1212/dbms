@@ -8,10 +8,11 @@ import org.springframework.stereotype.Repository;
 
 import backend.dbms.models.StudyEvent;
 import backend.dbms.models.Participation;
+import backend.dbms.models.ParticipationId;
 import backend.dbms.models.User;
 
 @Repository
-public interface ParticipationDao extends JpaRepository<Participation, Long> {
+public interface ParticipationDao extends JpaRepository<Participation, StudyEvent> {
   List<Participation> findByUser(User user);
   void deleteByUserAndEvent(User user, StudyEvent event);
   long countByEvent(StudyEvent event);

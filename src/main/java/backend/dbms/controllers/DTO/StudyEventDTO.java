@@ -18,7 +18,10 @@ import lombok.NoArgsConstructor;
 //     private String eventId;
 //     private Date eventDate;
 //     private List<Integer> periodList;
-//     // private String roomName;
+//     private String roomName;
+//     private String courseName;
+//     private String instructorName;
+//     private String content;
    
 // }
 public interface StudyEventDTO {

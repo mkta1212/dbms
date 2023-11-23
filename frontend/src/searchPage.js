@@ -26,19 +26,26 @@ import MenuItem from '@mui/material/MenuItem';
 import Select from '@mui/material/Select';
 import CircularProgress from '@mui/material/CircularProgress';
 import FormControl from '@mui/material/FormControl';
-
+import Autocomplete from '@mui/material/Autocomplete';
+import Grid from '@mui/material/Grid';
+import { TimePicker } from '@mui/x-date-pickers/TimePicker';
+import dayjs from 'dayjs'
+import moment from 'moment/moment'
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { DemoContainer, DemoItem } from '@mui/x-date-pickers/internals/demo';
 
 function Row (props) {
   const { row } = props
   const event = row[0]
   const myParticipation = row[1]
-  console.log(event)
+  // console.log(event)
   // 設定使用者下拉式選單開闔
   const [open, setOpen] = useState(false)
 
   const btn =(eventId,holderName,myParticipation)=>{
     const user = JSON.parse(localStorage.getItem("user"))
-    console.log(holderName)
     if (user){
       if (user.username === holderName){
         return "您為活動主辦人"
@@ -106,23 +113,31 @@ function Row (props) {
 }
 
 
-async function searchEvent (page, row) {
-  console.log(row)
+async function searchEvent (page, row, selectedCourse, date) {
+  console.log(selectedCourse)
   return await axios.get('http://localhost:8080/api/studyEvents', { 
     params:{
       page:page,
       row:row,
+      ...(selectedCourse!==null && {courseName:encodeURI(selectedCourse)}),
+      ...(date!==undefined && {eventDate:encodeURI(date)})
     },
     headers: authHeader() })
     .then((data) => { return data.data })
 }
-async function SearchParticipation () {
+async function searchParticipation () {
   return await axios.get('http://localhost:8080/api/joins', { headers: authHeader() })
+    .then((data) => { return data.data })
+}
+
+async function searchCourseName() {
+  return await axios.get('http://localhost:8080/api/courses/name', { headers: authHeader() })
     .then((data) => { return data.data })
 }
 
 async function joinEvent (eventId) {
   if (window.confirm('確定要參加？')) {
+    console.log(eventId)
     const url = 'http://localhost:8080/api/joins'
     await axios.post(url,{eventId},{ headers: authHeader() }).then((data) => {
       console.log(data)
@@ -133,6 +148,7 @@ async function joinEvent (eventId) {
 async function formEvent (event) {
   var periodList = JSON.parse("[" + event.periodList + "]");
   return {
+    eventId: event.eventId,
     courseName: event.courseName,
     instructorName: event.instructorName,
     roomName: event.roomName,
@@ -155,29 +171,37 @@ export default function SearchPage () {
   const [page, setPage] = useState(0)
   const [row, setRow] = useState(10)
   const [totalPage, setTotalPage] = useState(0)
-  const fetchData = async (page, row) => {
-    const response = await searchEvent(page, row)
+  const [courseNameList, setCourseNameList] = useState([])
+  const [date, setDate] = useState( undefined );
+  const [selectedCourse, setSelectedCourse] = useState(null)
+
+  const fetchData = async () => {
+    setLoading(true)
+    const response = await searchEvent(page, row, selectedCourse, date)
     // const participations = await SearchParticipation()
     console.log(response)
     const totalPage = response.totalPage
     const events=  response.eventDTO
     setTotalPage(totalPage)
-    const eventList = await Promise.all(events.map((event) => (formEvent(event))))
-    return eventList
-  }
-  useEffect(() => {
-    setLoading(true)
-    fetchData(page,row).then((res) => {
+    const eventList = await Promise.all(events.map((event) => (formEvent(event)))).then((res) => {
       setForm(res)
       setLoading(false)
     })
-      .catch((e) => {
-        console.log(e.message)
-      })
+    .catch((e) => {
+      console.log(e.message)
+    })
+    return eventList
+  }
+  useEffect(() => {
+    fetchData()
   }, [page,row])
 
+  useEffect(()=>{
+    searchCourseName().then((res)=>setCourseNameList(res))
+  },[])
+
   const fetchJoin = async () => {
-    const participations = await SearchParticipation()
+    const participations = await searchParticipation()
     console.log(participations)
     const participationList = await Promise.all(participations.map((event) => (formParticipation(event))))
     return participationList
@@ -208,22 +232,47 @@ export default function SearchPage () {
         :
         (
           <>
-          
-          <TableContainer component={Paper}>
-            <Table aria-label='collapsible table'>
-              <TableHead>
-                <TableRow>
-                  <TableCell />
-                  <TableCell align='right'>課程名稱</TableCell>
-                  <TableCell align='right'>授課老師</TableCell>
-                  <TableCell align='right'>活動日期</TableCell>
-                  <TableCell align='right'>活動時段</TableCell>
-                  <TableCell align='right'>活動地點</TableCell>
-                  <TableCell align='right'></TableCell>
-                  {/* <TableCell align='right' /> */}
-                  <TableCell align='right'>
-                  <FormControl sx={{ m: 1}} size="small">
+          <Box pt={3} pb={2}>
+            <Grid 
+              container
+              spacing={2}
+              justifyContent='center'
+              display='flex'
+              alignItems='center'>
+              <Grid item >
+                <Autocomplete
+                  disablePortal
+                  freeSolo
+                  options={courseNameList}
+                  onChange={(event, value) => setSelectedCourse(value)} 
+                  onInputChange={(event, value)=> setSelectedCourse(value)}
+                  sx={{ width: 300 }}
+                  renderInput={(params) => <TextField {...params} label="課程" />}
+                  value={selectedCourse}
+                />
+              </Grid>
+              <Grid item>
+                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                    <DatePicker
+                        disablePast = {true}
+                        value = {dayjs(date+1)}
+                        shouldDisableDate={(date)=>{
+                            return date.date()>new Date().getDate()+7}}
+                        formatDate={(date) => moment(date).format('DD-MM-YYYY')}
+                        onChange={(newDate) => {
+                          newDate = moment(new Date(newDate.year(),newDate.month(),newDate.date())).format('YYYY-MM-DD')
+                          setDate(newDate) 
+                        }}
+                    />
+                  </LocalizationProvider>
+                  </Grid>
                   
+              <Grid item>
+                <Button variant='outlined' onClick={fetchData}>搜尋</Button>
+              </Grid>
+              <Grid item>
+                <FormControl sx={{ m: 1}} size="small">
+                    
                     <Select
                       autoWidth={true}
                       value={row}
@@ -236,7 +285,21 @@ export default function SearchPage () {
                     </Select>
                     
                   </FormControl>
-                  </TableCell>
+              </Grid>
+            </Grid>
+          </Box>
+          <TableContainer component={Paper}>
+            <Table aria-label='collapsible table'>
+              <TableHead>
+                <TableRow>
+                  <TableCell />
+                  <TableCell align='right'>課程名稱</TableCell>
+                  <TableCell align='right'>授課老師</TableCell>
+                  <TableCell align='right'>活動日期</TableCell>
+                  <TableCell align='right'>活動時段</TableCell>
+                  <TableCell align='right'>活動地點</TableCell>
+                  <TableCell align='right'></TableCell>
+                  {/* <TableCell align='right' /> */}
                   
                 </TableRow>
               </TableHead>
@@ -261,6 +324,7 @@ export default function SearchPage () {
             </Stack>
             </Box>
           </TableContainer>
+          {/* </Box> */}
         </>
         )
       }

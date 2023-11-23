@@ -36,12 +36,15 @@ public class CourseController {
     @Autowired
     private CourseImpl courseImpl;
 
-    @GetMapping("/classroom/search")
+    @GetMapping("/courses/search")
     public List<Course> searchByCourseOrInstructor(@RequestParam String keyword) throws UnsupportedEncodingException{
         keyword = URLDecoder.decode(keyword, "UTF-8");
         System.err.println(keyword);
         return courseImpl.searchByCourseOrInstructor("%"+keyword+"%", "%"+keyword+"%");
     }
-
+    @GetMapping("/courses/name")
+    public List<String> getAllCourseName() throws UnsupportedEncodingException{
+        return courseImpl.getAllCoursesName();
+    }
     
 }

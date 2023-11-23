@@ -138,7 +138,7 @@ export default function CreateEvent (){
     async function searchClass(){
       const keyword = document.getElementById('keyword').value
 
-      await axios.get('http://localhost:8080/api/classroom/search' ,{params: {keyword:encodeURI(keyword)}, headers: authHeader() }).then(
+      await axios.get('http://localhost:8080/api/courses/search' ,{params: {keyword:encodeURI(keyword)}, headers: authHeader() }).then(
         (data)=>{
           console.log(data)
           setCourseList(data.data)
