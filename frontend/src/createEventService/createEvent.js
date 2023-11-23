@@ -4,7 +4,6 @@ import { Container } from '@mui/system'
 import { Component } from 'react'
 import Paper from '@mui/material/Paper';
 import axios from 'axios';
-import authHeader from '../services/auth-header';
 import TextField from '@mui/material/TextField'
 import IconButton from "@mui/material/IconButton";
 import SearchIcon from "@mui/icons-material/Search";
@@ -19,6 +18,7 @@ import TableRow from '@mui/material/TableRow';
 import Radio from '@mui/material/Radio';
 import { DisplaySettings } from '@mui/icons-material';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import authHeader from 'authService/authHeader';
 
 
 function CourseRow(props){

@@ -46,7 +46,7 @@ public class User {
   // private List<Participant> participantList;
 
   @JsonManagedReference
-  @OneToMany(mappedBy = "holder")
+  @OneToMany(mappedBy = "holder", fetch = FetchType.LAZY)
   // @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
   private List<StudyEvent> hold;
 

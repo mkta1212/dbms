@@ -25,6 +25,11 @@ public class ParticipationImpl implements ParticipationService {
     }
 
     @Override
+    public List<Long> getEventIdByUser(User user) {
+        return participantionDao.findEventIdByUser(user);
+    }
+
+    @Override
     public void delete(User user, StudyEvent event) {
         participantionDao.deleteByUserAndEvent(user, event);
     }

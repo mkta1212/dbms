@@ -14,7 +14,6 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography'
 import TextField from '@mui/material/TextField'
 import axios from 'axios';
-import authHeader from './services/auth-header';
 import { useEffect, useState } from 'react'
 import { NavLink } from 'react-bootstrap'
 import Pagination from '@mui/material/Pagination';
@@ -35,6 +34,7 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DemoContainer, DemoItem } from '@mui/x-date-pickers/internals/demo';
+import authHeader from 'authService/authHeader'
 
 function Row (props) {
   const { row } = props
@@ -125,10 +125,7 @@ async function searchEvent (page, row, selectedCourse, date) {
     headers: authHeader() })
     .then((data) => { return data.data })
 }
-async function searchParticipation () {
-  return await axios.get('http://localhost:8080/api/joins', { headers: authHeader() })
-    .then((data) => { return data.data })
-}
+
 
 async function searchCourseName() {
   return await axios.get('http://localhost:8080/api/courses/name', { headers: authHeader() })
@@ -141,6 +138,7 @@ async function joinEvent (eventId) {
     const url = 'http://localhost:8080/api/joins'
     await axios.post(url,{eventId},{ headers: authHeader() }).then((data) => {
       console.log(data)
+      window.location.reload()
     })
   }
 }
@@ -159,11 +157,6 @@ async function formEvent (event) {
   }
 }
 
-async function formParticipation (participation) {
-  
-  return participation.event.id
-}
-
 export default function SearchPage () {
   const [loading, setLoading] = useState(false);
   const [form, setForm] = useState([])
@@ -178,19 +171,19 @@ export default function SearchPage () {
   const fetchData = async () => {
     setLoading(true)
     const response = await searchEvent(page, row, selectedCourse, date)
-    // const participations = await SearchParticipation()
+
     console.log(response)
     const totalPage = response.totalPage
     const events=  response.eventDTO
     setTotalPage(totalPage)
-    const eventList = await Promise.all(events.map((event) => (formEvent(event)))).then((res) => {
+    await Promise.all(events.map((event) => (formEvent(event)))).then((res) => {
       setForm(res)
       setLoading(false)
     })
     .catch((e) => {
       console.log(e.message)
     })
-    return eventList
+    
   }
   useEffect(() => {
     fetchData()
@@ -200,23 +193,23 @@ export default function SearchPage () {
     searchCourseName().then((res)=>setCourseNameList(res))
   },[])
 
-  const fetchJoin = async () => {
-    const participations = await searchParticipation()
-    console.log(participations)
-    const participationList = await Promise.all(participations.map((event) => (formParticipation(event))))
-    return participationList
-  }
-  useEffect(() => {
+  // const fetchJoin = async () => {
+  //   const participations = await searchParticipation()
+  //   console.log(participations)
+  //   const participationList = await Promise.all(participations.map((event) => (formParticipation(event))))
+  //   return participationList
+  // }
+  // useEffect(() => {
     
-    fetchJoin().then((res) => {
-      console.log(res)
-      setMyParticipation(res)
+  //   fetchJoin().then((res) => {
+  //     console.log(res)
+  //     setMyParticipation(res)
       
-    })
-      .catch((e) => {
-        console.log(e.message)
-      })
-  }, [])
+  //   })
+  //     .catch((e) => {
+  //       console.log(e.message)
+  //     })
+  // }, [])
 
   return (
     <>

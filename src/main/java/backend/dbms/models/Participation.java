@@ -27,14 +27,14 @@ public class Participation {
 
     // @ManyToOne(cascade = {CascadeType.PERSIST,CascadeType.MERGE})
     @PrimaryKeyJoinColumn(name = "user_id")
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @Id
     @NonNull
     private User user;
     
     // @ManyToOne(cascade = {CascadeType.PERSIST,CascadeType.MERGE})
     @PrimaryKeyJoinColumn(name = "event_id")
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @Id
     @NonNull
     private StudyEvent event;

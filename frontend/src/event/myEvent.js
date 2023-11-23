@@ -14,9 +14,9 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography'
 import TextField from '@mui/material/TextField'
 import axios from 'axios';
-import authHeader from '../services/auth-header';
 import { useEffect, useState } from 'react'
 import { NavLink } from 'react-bootstrap'
+import authHeader from 'authService/authHeader'
 
 function Row (props) {
   const { row } = props
@@ -73,18 +73,14 @@ function Row (props) {
 
 
 async function SearchEvent () {
-  return await axios.get('http://localhost:8080/api/myevents', { headers: authHeader() })
-    .then((data) => { return data.data })
-}
-async function SearchEventAmount (id) {
-  console.log(id)
-  return await axios.post('http://localhost:8080/api/participantAmounts',{id}, { headers: authHeader()})
+  return await axios.get('http://localhost:8080/api/mystudyEvents', { headers: authHeader() })
     .then((data) => { return data.data })
 }
 
+
 async function formEvent (event) {
   var eventDate;
-  var amount = await SearchEventAmount(event.id)
+  // var amount = await SearchEventAmount(event.id)
   if (event.date.includes("T")){
     eventDate = event.date.split("T")[0]+" "+event.date.split("T")[1].split(".")[0]
   
@@ -100,7 +96,6 @@ async function formEvent (event) {
     eventStatus: event.eventStatus,
     max: event.max,
     content: event.content,
-    amount: amount,
   }
 }
 
@@ -113,6 +108,7 @@ export default function MyEvents () {
     const events = await SearchEvent()
     console.log(events)
     const eventList = await Promise.all(events.map((event) => (formEvent(event))))
+    
     return eventList
   }
   useEffect(() => {

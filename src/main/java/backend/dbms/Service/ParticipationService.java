@@ -12,4 +12,5 @@ public interface ParticipationService {
     void delete(User user, StudyEvent event);
     long count(StudyEvent event);
     void createParticipation(Participation participantion);
+    List<Long> getEventIdByUser(User user);
 }

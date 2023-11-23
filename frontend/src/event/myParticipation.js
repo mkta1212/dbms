@@ -14,9 +14,9 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography'
 import TextField from '@mui/material/TextField'
 import axios from 'axios';
-import authHeader from '../services/auth-header';
 import { useEffect, useState } from 'react'
 import { NavLink } from 'react-bootstrap'
+import authHeader from 'authService/authHeader'
 
 function Row (props) {
   const { row } = props

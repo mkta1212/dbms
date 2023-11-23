@@ -47,12 +47,12 @@ public interface StudyEventDao extends JpaRepository<StudyEvent, Long> {
   //   )
     @Query(value = """
     Select sep.event.eventId as eventId, sep.event.course.courseName as courseName, sep.event.course.instructorName as instructorName, sep.classroom.roomName as roomName, group_concat(sep.eventPeriod) as periodList, sep.eventDate as eventDate, sep.event.content as content 
-    From StudyEventPeriod as sep 
-    where sep.event.holder != :holder and sep.event.status=:status and sep.eventDate between :startDate and :endDate
+    From StudyEventPeriod as sep Left Join Participation as p on p.user = :holder and sep.event = p.event 
+    where p.user = Null and sep.event.holder != :holder and sep.event.status=:status and sep.eventDate between :startDate and :endDate 
     and (:courseName is Null or sep.event.course.courseName LIKE %:courseName%) 
     and (:eventDate is Null or sep.eventDate=:eventDate)
     group by sep.event"""
-    )
+    ) 
   Page<StudyEventDTO> findByMultiCon (@Param("holder") User holder, @Param("startDate") Date startDate, @Param("endDate") Date endDate, @Param("status") Status status, @Param("courseName") String courseName, @Param("eventDate") Date date, Pageable pageable);
 
   // List<StudyEvent> findByClassroomAndEventDate(Classroom classroom, Date date);

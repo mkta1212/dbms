@@ -69,7 +69,7 @@ public class StudyEventImpl implements StudyEventService{
 
     @Override
     public Page<StudyEventDTO> getEventByMultiCon(User user, int page, int row, String courseName, Date date){  
-        Pageable pageable = PageRequest.of(page,row, Sort.by("id"));
+        Pageable pageable = PageRequest.of(page,row, Sort.by("eventDate"));
         Date today = new Date(new java.util.Date().getTime());
         return eventDao.findByMultiCon(user, today,new Date(today.getTime()+1000*60*60*24*7),Status.Ongoing, courseName, date, pageable);  
         // Pageable pageable = PageRequest.of(page,row, Sort.by("id"));

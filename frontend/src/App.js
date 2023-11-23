@@ -7,8 +7,6 @@ import AuthService from "./authService/authService";
 import { useDispatch, useSelector } from "react-redux";
 import Login from "./authService/login";
 import Register from "./authService/register";
-import Home from "./components/home.component";
-import Profile from "./components/profile.component";
 import { styled, useTheme } from '@mui/material/styles';
 import SearchPage from "searchPage";
 import CreateEvent from "createEventService/createEvent";
@@ -31,7 +29,6 @@ import LoginIcon from '@mui/icons-material/Login';
 import Divider from '@mui/material/Divider';
 import List from '@mui/material/List';
 import Typography from '@mui/material/Typography';
-import authService from "services/auth.service";
 import Container from '@mui/material/Container';
 import { useCallback } from "react";
 
@@ -437,11 +434,8 @@ export default class App extends Component {
                 justifyContent="center"
                 alignItems="center"> */}
               <Routes>
-                  <Route exact path="/" element={<Home />} />
-                  <Route exact path="/home" element={<Home />} />
                   <Route exact path="/login" element={<Login /> } />
                   <Route exact path="/register" element={<Register />} />
-                  <Route exact path="/profile" element={<Profile />} />
                   <Route path="/events" element={<SearchPage />} />
                   <Route path="/createEvents" element={<CreateEvent />} />
                   <Route path="/myEvents" element={<MyEvents />} />

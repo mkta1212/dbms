@@ -5,7 +5,6 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DemoContainer, DemoItem } from '@mui/x-date-pickers/internals/demo';
 import axios from 'axios';
-import authHeader from '../services/auth-header';
 import { useEffect, useState } from 'react'
 import CircularProgress from '@mui/material/CircularProgress';
 import { TimePicker } from '@mui/x-date-pickers/TimePicker';
@@ -13,6 +12,7 @@ import dayjs from 'dayjs'
 import moment from 'moment/moment'
 import ClassroomRow from './classroomRow'
 import Container from '@mui/material/Container';
+import authHeader from 'authService/authHeader';
 
 
 async function searchClassroom(date){

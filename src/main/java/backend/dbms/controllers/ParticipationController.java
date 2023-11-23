@@ -64,6 +64,14 @@ public class ParticipationController {
         return participationImpl.getByUser(user);
     }
 
+    @GetMapping("/joins/eventId")
+    @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
+    public List<Long> findMyParticipationEventId(@RequestHeader("Authorization") String token){
+        String userName = jwtUtils.getUserNameFromJwtToken(token.substring(7, token.length()));
+        User user = userImpl.getByUsername(userName).get();
+        return participationImpl.getEventIdByUser(user);
+    }
+
     @DeleteMapping("/joins")
     @Transactional
     @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
