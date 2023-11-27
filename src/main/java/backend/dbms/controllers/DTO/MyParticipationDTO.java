@@ -4,7 +4,7 @@ import java.sql.Date;
 
 import backend.dbms.models.Status;
 
-public interface MyEventDTO {
+public interface MyParticipationDTO {
 
     String getEventId();
     Date getEventDate();
@@ -13,6 +13,4 @@ public interface MyEventDTO {
     String getCourseName();
     String getInstructorName();
     String getContent();
-    Status getStatus();
-    int getTotalParticipation();
 }

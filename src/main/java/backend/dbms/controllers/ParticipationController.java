@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -14,12 +15,14 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import backend.dbms.models.StudyEvent;
 import backend.dbms.Service.Impl.ParticipationImpl;
 import backend.dbms.Service.Impl.StudyEventImpl;
 import backend.dbms.Service.Impl.UserImpl;
+import backend.dbms.controllers.DTO.MyParticipationDTO;
 import backend.dbms.models.Participation;
 import backend.dbms.models.Status;
 import backend.dbms.models.User;
@@ -56,12 +59,12 @@ public class ParticipationController {
         participationImpl.createParticipation(participantion);
     }
 
-    @GetMapping("/joins")
+    @GetMapping("/myjoins")
     @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
-    public List<Participation> findMyParticipation(@RequestHeader("Authorization") String token){
+    public Page<MyParticipationDTO> findMyParticipation(@RequestHeader("Authorization") String token,@RequestParam int page, @RequestParam int row, @RequestParam Status status){
         String userName = jwtUtils.getUserNameFromJwtToken(token.substring(7, token.length()));
         User user = userImpl.getByUsername(userName).get();
-        return participationImpl.getByUser(user);
+        return participationImpl.getMyParticipation(user, page-1, row, status);
     }
 
     @GetMapping("/joins/eventId")
@@ -77,9 +80,10 @@ public class ParticipationController {
     @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
     public void deleParticipant(@RequestHeader("Authorization") String token,@RequestBody StudyEvent event){
         String userName = jwtUtils.getUserNameFromJwtToken(token.substring(7, token.length()));
+        System.err.println(event);
         User user = userImpl.getByUsername(userName).get();
         event = eventImpl.getByEventId(event.getEventId()).get();
-        System.err.println(event.toString());
+        // System.err.println(event.toString());
         participationImpl.delete(user, event);
     }
 

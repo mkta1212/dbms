@@ -20,6 +20,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import backend.dbms.Service.StudyEventService;
+import backend.dbms.controllers.DTO.MyEventDTO;
 import backend.dbms.controllers.DTO.StudyEventDTO;
 import backend.dbms.controllers.Request.StudyEventReq;
 import backend.dbms.models.Classroom;
@@ -147,7 +148,11 @@ public class StudyEventImpl implements StudyEventService{
     public long count(){
         return eventDao.count();
     }
-
+    @Override
+    public Page<MyEventDTO> getMyEvent(User user, int page, int row,Status status){
+        Pageable pageable = PageRequest.of(page,row, Sort.by("eventDate"));
+        return eventDao.findMyEvent(user, status, pageable);
+    }
     // @Override
     // public List<StudyEvent> getByClassroomAndDate(Classroom classroom, Date date) {
     //     return eventDao.findByClassroomAndEventDate(classroom, date);

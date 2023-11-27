@@ -4,7 +4,6 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "./App.css";
 
 import AuthService from "./authService/authService";
-import { useDispatch, useSelector } from "react-redux";
 import Login from "./authService/login";
 import Register from "./authService/register";
 import { styled, useTheme } from '@mui/material/styles';

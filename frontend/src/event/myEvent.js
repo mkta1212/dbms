@@ -1,15 +1,3 @@
-import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
-import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp'
-import Button from '@mui/material/Button'
-import Collapse from '@mui/material/Collapse'
-import IconButton from '@mui/material/IconButton'
-import Paper from '@mui/material/Paper'
-import Table from '@mui/material/Table'
-import TableBody from '@mui/material/TableBody'
-import TableCell from '@mui/material/TableCell'
-import TableContainer from '@mui/material/TableContainer'
-import TableHead from '@mui/material/TableHead'
-import TableRow from '@mui/material/TableRow'
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography'
 import TextField from '@mui/material/TextField'
@@ -17,153 +5,83 @@ import axios from 'axios';
 import { useEffect, useState } from 'react'
 import { NavLink } from 'react-bootstrap'
 import authHeader from 'authService/authHeader'
-
-function Row (props) {
-  const { row } = props
-  // 設定使用者下拉式選單開闔
-  const [open, setOpen] = useState(false)
-
-  return (
-    <>
-      <TableRow sx={{ borderBottom: 1 }} id={'eventId' + row.eventId}>
-        <TableCell>
-          <IconButton
-            aria-label='expand row'
-            size='small'
-            onClick={() => setOpen(!open)}
-          >
-            {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
-          </IconButton>
-        </TableCell>
-        <TableCell align='right'>{row.eventName}</TableCell>
-        <TableCell align='right'>{row.eventDate}</TableCell>
-        
-        <TableCell align='right'>{row.eventLocation}</TableCell>
-        <TableCell align='right'>{row.max}</TableCell>
-        <TableCell align='right'>{row.amount}</TableCell>
-      </TableRow>
-      <TableRow>
-        <TableCell style={{ paddingBottom: 1, paddingTop: 0, margin: 2 }} colSpan={6}>
-          <Collapse in={open} timeout='auto' unmountOnExit>
-            <Box sx={{ margin: 1 }}>
-              
-              {/* <TableCell> */}
-                <Typography variant='h6' gutterBottom component='div'>
-                  活動內容
-
-                </Typography>
-                <TextField 
-                value={row.content}
-                multiline
-                fullWidth 
-                InputProps={{
-                    readOnly: true,
-                }} />
-                {/* <TableCell align='right'>{row.content}</TableCell> */}
-              {/* </TableCell> */}
-            </Box>
-          </Collapse>
-        </TableCell>
-      </TableRow>
+import TabPanel from '@mui/lab/TabPanel';
+import Tab from '@mui/material/Tab';
+import TabContext from '@mui/lab/TabContext';
+import TabList from '@mui/lab/TabList';
+import EventTable from './eventTable'
 
 
-    </>
-  )
-}
 
-
-async function SearchEvent () {
-  return await axios.get('http://localhost:8080/api/mystudyEvents', { headers: authHeader() })
+async function SearchEvent (status,page) {
+  return await axios.get('http://localhost:8080/api/mystudyEvents',
+   { params:{
+    page:page,
+    row:20,
+    status: status
+   },
+    headers: authHeader() })
     .then((data) => { return data.data })
 }
 
 
 async function formEvent (event) {
-  var eventDate;
   // var amount = await SearchEventAmount(event.id)
-  if (event.date.includes("T")){
-    eventDate = event.date.split("T")[0]+" "+event.date.split("T")[1].split(".")[0]
-  
-  }
-  else{
-    eventDate = event.date
-  }
+  console.log(event)
+  var periodList = JSON.parse("["+event.periodList+"]");
   return {
-    eventId: event.id,
-    eventName: event.eventName,
-    eventLocation: event.location,
-    eventDate: eventDate,
-    eventStatus: event.eventStatus,
-    max: event.max,
+    courseName: event.courseName,
+    instructorName: event.instructorName,
+    roomName: event.roomName,
+    eventDate: event.eventDate,
+    periodList: periodList,
     content: event.content,
+    totalParticipation: event.totalParticipation
   }
 }
 
 export default function MyEvents () {
   const [form, setForm] = useState([])
-  const [in_progress,set_in_progress] = useState(false)
-  const [finished,set_finished] = useState(false)
+  const [panel, setPanel] = useState(0);
+  const [page, setPage] = useState(1)
+  const [totalPage, setTotalPage] = useState(0)
 
-  const fetchData = async () => {
-    const events = await SearchEvent()
-    console.log(events)
-    const eventList = await Promise.all(events.map((event) => (formEvent(event))))
-    
-    return eventList
-  }
-  useEffect(() => {
-    fetchData().then((res) => {
+  const fetchData = async (status) => {
+    const events = await SearchEvent(status,page)
+    Promise.all(events.content.map((event) => (formEvent(event)))).then((res) => {
+      console.log(res)
       setForm(res)
+      setTotalPage(events.totalPages)
     })
       .catch((e) => {
         console.log(e.message)
       })
-  }, [])
+  }
+  useEffect(() => {
+    fetchData("Ongoing",page)
+  }, [page])
 
   return (
     <>
-        <IconButton id = "in_progress_btn"
-            onClick={() => {
-            set_in_progress(true)
-            set_finished(false)
-            document.getElementById("in_progress_btn").style.color = "red"
-            document.getElementById("in_progress_btn").style.fontWeight = "bolder"
-            document.getElementById("finished_btn").style.color= "grey"
-            document.getElementById("finished_btn").style.fontWeight= "normal"}}>
-            進行中
-        </IconButton>
-        <IconButton id = "finished_btn"
-            onClick={() => {
-            set_in_progress(false)
-            set_finished(true)
-            document.getElementById("finished_btn").style.color = "red"
-            document.getElementById("finished_btn").style.fontWeight = "bolder"
-            document.getElementById("in_progress_btn").style.color= "grey"
-            document.getElementById("in_progress_btn").style.fontWeight= "normal"}}>
-            已結束
-        </IconButton>
-        <TableContainer component={Paper}>
-            
+        <TabContext value={panel}>
+        <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+          <TabList onChange={(event, value)=>{
+            setPanel(value)
+            fetchData(value)
+            }} 
+          aria-label="lab API tabs example">
+            <Tab label="進行中" value="Ongoing" />
+            <Tab label="已結束" value="Finished" />
+          </TabList>
+        </Box>
+        <TabPanel value="Ongoing">
+          <EventTable events={form} page={page} setPage={setPage} totalPage={totalPage} setTotalPage={setTotalPage} />
         
-        <Table aria-label='collapsible table'>
-          <TableHead>
-            <TableRow>
-                
-              <TableCell />
-              <TableCell align='right'>活動名稱</TableCell>
-              <TableCell align='right'>活動時間</TableCell>
-              <TableCell align='right'>活動地點</TableCell>
-              <TableCell align='right'>活動人數上限</TableCell>
-              <TableCell align='right'>目前活動人數</TableCell>
-              {/* <TableCell align='right' /> */}
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {in_progress && form.filter(event =>event.eventStatus==="In_Progress").map((event)=><Row key={event.eventId} row={event} />)}
-            {finished && form.filter(event =>event.eventStatus==="Finished").map((event)=><Row key={event.eventId} row={event} />)}
-          </TableBody>
-        </Table>
-      </TableContainer>
+      </TabPanel>
+      <TabPanel value="Finished">
+      <EventTable events={form} page={page} setPage={setPage} totalPage={totalPage} setTotalPage={setTotalPage} />
+      </TabPanel>
+      </TabContext>
     </>
   )
 }

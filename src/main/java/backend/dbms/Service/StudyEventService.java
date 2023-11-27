@@ -6,6 +6,7 @@ import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 
+import backend.dbms.controllers.DTO.MyEventDTO;
 import backend.dbms.controllers.DTO.StudyEventDTO;
 import backend.dbms.controllers.Request.StudyEventReq;
 import backend.dbms.models.Classroom;
@@ -25,6 +26,7 @@ public interface StudyEventService {
     long count();
     Page<StudyEventDTO> getAvailableEvent(int page, int row);
     Page<StudyEventDTO> getEventByMultiCon(User user,int page, int row, String courseName, Date date);
+    Page<MyEventDTO> getMyEvent(User user, int page, int row, Status status);
     // List<StudyEvent> getByClassroomAndDate(Classroom classroom, Date date);
     // List<EventId> getBookedPeriod(Classroom classroom, Date date);
     // List<StudyEvent> getByDateRange(Date startDate, Date endDate);

@@ -11,6 +11,7 @@ import org.springframework.stereotype.Repository;
 
 import backend.dbms.models.StudyEvent;
 import backend.dbms.models.StudyEventPeriod;
+import backend.dbms.controllers.DTO.MyEventDTO;
 import backend.dbms.controllers.DTO.StudyEventDTO;
 import backend.dbms.models.Classroom;
 import backend.dbms.models.Status;
@@ -47,13 +48,27 @@ public interface StudyEventDao extends JpaRepository<StudyEvent, Long> {
   //   )
     @Query(value = """
     Select sep.event.eventId as eventId, sep.event.course.courseName as courseName, sep.event.course.instructorName as instructorName, sep.classroom.roomName as roomName, group_concat(sep.eventPeriod) as periodList, sep.eventDate as eventDate, sep.event.content as content 
-    From StudyEventPeriod as sep Left Join Participation as p on p.user = :holder and sep.event = p.event 
-    where p.user = Null and sep.event.holder != :holder and sep.event.status=:status and sep.eventDate between :startDate and :endDate 
+    From StudyEventPeriod as sep Left Join Participation as p on p.user = :user and sep.event = p.event 
+    where p.user = Null and sep.event.holder != :user and sep.event.status=:status and sep.eventDate between :startDate and :endDate 
     and (:courseName is Null or sep.event.course.courseName LIKE %:courseName%) 
     and (:eventDate is Null or sep.eventDate=:eventDate)
     group by sep.event"""
     ) 
-  Page<StudyEventDTO> findByMultiCon (@Param("holder") User holder, @Param("startDate") Date startDate, @Param("endDate") Date endDate, @Param("status") Status status, @Param("courseName") String courseName, @Param("eventDate") Date date, Pageable pageable);
+  Page<StudyEventDTO> findByMultiCon (@Param("user") User user, @Param("startDate") Date startDate, @Param("endDate") Date endDate, @Param("status") Status status, @Param("courseName") String courseName, @Param("eventDate") Date date, Pageable pageable);
+
+  @Query(value ="""
+      Select sep.event.eventId as eventId, sep.event.course.courseName as courseName, sep.event.course.instructorName as instructorName, sep.classroom.roomName as roomName, group_concat(sep.eventPeriod) as periodList, sep.eventDate as eventDate, sep.event.content as content, sep.event.status as status, count(distinct(p.user)) as totalParticipation
+      From StudyEventPeriod as sep Left join Participation as p on sep.event = p.event 
+      Where sep.event.holder = :user and sep.event.status=:status
+      group by sep.event
+      """)
+      // @Query(value ="""
+      // Select sep.event.eventId as eventId, sep.event.course.courseName as courseName, sep.event.course.instructorName as instructorName, sep.classroom.roomName as roomName, group_concat(sep.eventPeriod) as periodList, sep.eventDate as eventDate, sep.event.content as content 
+      // From StudyEventPeriod as sep 
+      // Where sep.event.holder = :user and sep.event.status = :status
+      // group by sep.event
+      // """)
+  Page<MyEventDTO> findMyEvent(@Param("user") User user, @Param("status") Status status, Pageable pageable);
 
   // List<StudyEvent> findByClassroomAndEventDate(Classroom classroom, Date date);
   // List<EventId> findAllByClassroomAndEventDate(Classroom classroom, Date date);

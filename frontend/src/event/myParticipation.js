@@ -17,191 +17,100 @@ import axios from 'axios';
 import { useEffect, useState } from 'react'
 import { NavLink } from 'react-bootstrap'
 import authHeader from 'authService/authHeader'
-
-function Row (props) {
-  const { row } = props
-  // 設定使用者下拉式選單開闔
-  const [open, setOpen] = useState(false)
-  const btn =(eventStatus)=>{
-    if (eventStatus==="In_Progress"){
-      return (<Button onClick={() => { deleteParticipant(row.eventId) }}>取消活動</Button>)
-    }
-  }
-  // function FeedbackArea(status){
-  //   const {eventStatus} = status
-  //   if (eventStatus==="Finished"){
-  //     return (
-  //       <>
-  //     <Typography variant='h6' gutterBottom component='div'>
-  //                 活動回饋
-
-  //       </Typography>
-  //     <TextField 
-  //       multiline
-  //       fullWidth 
-  //       />
-       
-  //       </>)
-  //   }
-  // }
-
-  return (
-    <>
-      <TableRow sx={{ borderBottom: 1 }} id={'eventId' + row.eventId}>
-        <TableCell>
-          <IconButton
-            aria-label='expand row'
-            size='small'
-            onClick={() => setOpen(!open)}
-          >
-            {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
-          </IconButton>
-        </TableCell>
-        <TableCell align='right'>{row.eventName}</TableCell>
-        <TableCell align='right'>{row.eventDate}</TableCell>
-        
-        <TableCell align='right'>{row.eventLocation}</TableCell>
-        <TableCell align='right'>{row.max}</TableCell>
-        <TableCell align='right'>{row.joinDate}</TableCell>
-        <TableCell align='right'>{btn(row.eventStatus)}</TableCell>
-      </TableRow>
-      <TableRow>
-        <TableCell style={{ paddingBottom: 1, paddingTop: 0, margin: 2 }} colSpan={6}>
-          <Collapse in={open} timeout='auto' unmountOnExit>
-            <Box sx={{ margin: 1 }}>
-              
-              {/* <TableCell> */}
-                <Typography variant='h6' gutterBottom component='div'>
-                  活動內容
-
-                </Typography>
-                <TextField 
-                value={row.content}
-                multiline
-                fullWidth 
-                InputProps={{
-                    readOnly: true,
-                }} />
-                {/* <FeedbackArea eventStatus={row.eventStatus}/> */}
-                {/* <TableCell align='right'>{row.content}</TableCell> */}
-              {/* </TableCell> */}
-            </Box>
-          </Collapse>
-        </TableCell>
-      </TableRow>
+import TabPanel from '@mui/lab/TabPanel';
+import Tab from '@mui/material/Tab';
+import TabContext from '@mui/lab/TabContext';
+import TabList from '@mui/lab/TabList';
+import EventTable from './eventTable'
+import ParticipationTable from './participationTable'
 
 
-    </>
-  )
-}
-
-
-async function SearchParticipation () {
-  return await axios.get('http://localhost:8080/api/joins', { headers: authHeader() })
+async function SearchParticipation (status, page) {
+  return await axios.get('http://localhost:8080/api/myjoins',
+  { params:{
+    page:page,
+    row:20,
+    status: status
+   },
+    headers: authHeader() })
     .then((data) => { return data.data })
 }
 
 async function deleteParticipant(id) {
   if (window.confirm('確定要取消參加？')) {
     const url = 'http://localhost:8080/api/joins'
-    await axios.delete(url,{ headers: authHeader(),data:{id} }).then((data) => {
+    await axios.delete(url,{ headers: authHeader(),data:{eventId:id} }).then((data) => {
       console.log(data)
+      window.location.reload()
     })
   }
 }
 
 async function formParticipation (participation) {
-  var eventDate;
+  console.log(participation)
   var joinDate;
-  const event = participation.event
-  if (event.date.includes("T")){
-    eventDate = event.date.split("T")[0]+" "+event.date.split("T")[1].split(".")[0]
-  }
-  else{
-    eventDate = event.date
-  }
-  if (participation.date.includes("T")){
-    joinDate = participation.date.split("T")[0]+" "+event.date.split("T")[1].split(".")[0]
-  }
-  else{
-    joinDate = participation.date
-  }
+  var periodList = JSON.parse("["+participation.periodList+"]");
+  // if (participation.date.includes("T")){
+  //   joinDate = participation.date.split("T")[0]+" "+participation.date.split("T")[1].split(".")[0]
+  // }
+  // else{
+  //   joinDate = participation.date
+  // }
   return {
-    joinDate: joinDate,
-    eventId: event.id,
-    eventName: event.eventName,
-    eventLocation: event.location,
-    eventDate: eventDate,
-    eventStatus: event.eventStatus,
-    max: event.max,
-    content: event.content,
+    // joinDate: joinDate,
+    eventId: participation.eventId,
+    courseName: participation.courseName,
+    instructorName: participation.instructorName,
+    roomName: participation.roomName,
+    eventDate: participation.eventDate,
+    periodList: periodList,
+    content: participation.content,
   }
 }
 
 export default function MyEvents () {
   const [form, setForm] = useState([])
-  const [in_progress,set_in_progress] = useState(false)
-  const [finished,set_finished] = useState(false)
+  const [panel, setPanel] = useState(0);
+  const [page, setPage] = useState(1)
+  const [totalPage, setTotalPage] = useState(0)
 
-  const fetchData = async () => {
-    const participations = await SearchParticipation()
+  const fetchData = async (status) => {
+    const participations = await SearchParticipation(status,page)
     console.log(participations)
-    const participationList = await Promise.all(participations.map((participation) => (formParticipation(participation))))
-    return participationList
-  }
-  useEffect(() => {
-    fetchData().then((res) => {
+    Promise.all(participations.content.map((participation) => (formParticipation(participation)))).then((res) => {
+      console.log(res)
       setForm(res)
+      setTotalPage(participations.totalPages)
     })
       .catch((e) => {
         console.log(e.message)
       })
-  }, [])
+  }
+  useEffect(() => {
+    fetchData("Ongoing",page)
+  }, [page])
 
   return (
     <>
-        <IconButton id = "in_progress_btn"
-            onClick={() => {
-            set_in_progress(true)
-            set_finished(false)
-            document.getElementById("in_progress_btn").style.color = "red"
-            document.getElementById("in_progress_btn").style.fontWeight = "bolder"
-            document.getElementById("finished_btn").style.color= "grey"
-            document.getElementById("finished_btn").style.fontWeight= "normal"}}>
-            進行中
-        </IconButton>
-        <IconButton id = "finished_btn"
-            onClick={() => {
-            set_in_progress(false)
-            set_finished(true)
-            document.getElementById("finished_btn").style.color = "red"
-            document.getElementById("finished_btn").style.fontWeight = "bolder"
-            document.getElementById("in_progress_btn").style.color= "grey"
-            document.getElementById("in_progress_btn").style.fontWeight= "normal"}}>
-            已結束
-        </IconButton>
-        <TableContainer component={Paper}>
-            
+        <TabContext value={panel}>
+        <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+          <TabList onChange={(event, value)=>{
+            setPanel(value)
+            fetchData(value)
+            }} 
+          aria-label="lab API tabs example">
+            <Tab label="進行中" value="Ongoing" />
+            <Tab label="已結束" value="Finished" />
+          </TabList>
+        </Box>
+        <TabPanel value="Ongoing">
+          <ParticipationTable participations={form} page={page} setPage={setPage} totalPage={totalPage} status={panel} deleteParticipant={deleteParticipant}/>
         
-        <Table aria-label='collapsible table'>
-          <TableHead>
-            <TableRow>
-                
-              <TableCell />
-              <TableCell align='right'>活動名稱</TableCell>
-              <TableCell align='right'>活動時間</TableCell>
-              <TableCell align='right'>活動地點</TableCell>
-              <TableCell align='right'>活動人數上限</TableCell>
-              <TableCell align='right'>加入活動時間</TableCell>
-              {/* <TableCell align='right' /> */}
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {in_progress && form.filter(participation =>participation.eventStatus==="In_Progress").map((event)=><Row key={event.eventId} row={event} />)}
-            {finished && form.filter(participation =>participation.eventStatus==="Finished").map((event)=><Row key={event.eventId} row={event} />)}
-          </TableBody>
-        </Table>
-      </TableContainer>
+      </TabPanel>
+      <TabPanel value="Finished">
+      <ParticipationTable participations={form} page={page} setPage={setPage} totalPage={totalPage} status={panel} deleteParticipant={deleteParticipant}/>
+      </TabPanel>
+      </TabContext>
     </>
   )
 }

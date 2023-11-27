@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 import backend.dbms.models.StudyEvent;
 import backend.dbms.models.StudyEventPeriod;
 import backend.dbms.Service.Impl.StudyEventImpl;
+import backend.dbms.controllers.DTO.MyEventDTO;
 import backend.dbms.controllers.DTO.StudyEventDTO;
 import backend.dbms.controllers.Request.StudyEventReq;
 import backend.dbms.controllers.Response.EventResponse;
@@ -74,10 +75,10 @@ public class StudyEventController {
     }
     @GetMapping("/mystudyEvents")
     @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
-    public List<StudyEvent> mystudyEvents(@RequestHeader("Authorization") String token) {
+    public Page<MyEventDTO> mystudyEvents(@RequestHeader("Authorization") String token,@RequestParam int page, @RequestParam int row, @RequestParam Status status) {
         String userName = jwtUtils.getUserNameFromJwtToken(token.substring(7, token.length()));
         User user = userRepository.findByUsername(userName).get();
-        return eventImpl.getByHolder(user);
+        return eventImpl.getMyEvent(user,page-1,row,status);
     }
 
     
