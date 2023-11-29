@@ -30,6 +30,9 @@ import List from '@mui/material/List';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { useCallback } from "react";
+import Courses from "course/courses";
+import CreateCourse from "course/createCourse";
+import EditCourse from "course/editCourse";
 
 
 const drawerWidth = 240;
@@ -439,7 +442,10 @@ export default class App extends Component {
                   <Route path="/createEvents" element={<CreateEvent />} />
                   <Route path="/myEvents" element={<MyEvents />} />
                   <Route path="/myParticipation" element={<MyParticipation />} />
-                  <Route path="chooseClassroom" element = {<BookedClassroom />} />
+                  <Route path="/chooseClassroom" element = {<BookedClassroom />} />
+                  <Route path="/courses" element = {<Courses />} />
+                  <Route path="/createCourse" element = {<CreateCourse />} />
+                  <Route path="/editCourse" element = {<EditCourse />} />
                   {/* <Route exact path={["/", "/home"]} component={Home} />
                   <Route exact path="/register" component={Register} />
                   <Route exact path="/profile" component={Profile} />

@@ -4,6 +4,10 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import backend.dbms.Service.CourseService;
@@ -19,8 +23,8 @@ public class CourseImpl implements CourseService {
     private CourseDao courseDao;
 
     @Override
-    public void createCourse(Course course) {
-        courseDao.save(course);
+    public Long createCourse(Course course) {
+        return courseDao.save(course).getCourseId();
     }
 
     @Override
@@ -41,6 +45,22 @@ public class CourseImpl implements CourseService {
     @Override
     public List<String> getAllCoursesName(){
         return courseDao.findAllCourseName();
+    }
+
+    @Override
+    public Long updateCourse(Course course) {
+        return courseDao.save(course).getCourseId();
+    }
+
+    @Override
+    public void deleteCourse(Long courseId) {
+        courseDao.deleteById(courseId);
+    }
+
+    @Override
+    public Page<Course> searchCourse(Long courseId, String courseName, String instuctorName, String departmentName, int page, int row){
+        Pageable pageable = PageRequest.of(page,row, Sort.by("departmentName"));
+        return courseDao.findByMultiCon(courseId, courseName, instuctorName, departmentName, pageable);
     }
     
     

@@ -10,12 +10,15 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -24,6 +27,7 @@ import backend.dbms.Service.Pair;
 import backend.dbms.Service.Impl.ClassroomImpl;
 import backend.dbms.Service.Impl.StudyEventPeriodImpl;
 import backend.dbms.controllers.Request.ResDate;
+import backend.dbms.models.Classroom;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
@@ -44,5 +48,18 @@ public class ClassroomController {
         return classroomList;
     }
 
-    
+    @PostMapping("/classroom")
+    public void createClassroom(@RequestBody Classroom classroom){
+        classroomImpl.createClassroom(classroom);
+    }
+
+    @PutMapping("/classroom")
+    public void updateClassroom(@RequestBody Classroom classroom){
+        classroomImpl.updateClassroom(classroom);
+    }
+
+    @DeleteMapping("/classroom")
+    public void deleteClassroom(@RequestParam(value = "classroomId") Long classroomId){
+        classroomImpl.deleteClassroom(classroomId);
+    }
 }

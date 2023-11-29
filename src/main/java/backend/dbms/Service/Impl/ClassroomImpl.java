@@ -72,6 +72,18 @@ public class ClassroomImpl implements ClassroomService {
             }
         return bookedList;
     }
+    @Override
+    public void createClassroom(Classroom classroom) {
+        classroomDao.save(classroom);
+    }
+    @Override
+    public void updateClassroom(Classroom classroom) {
+        classroomDao.save(classroom);
+    }
+    @Override
+    public void deleteClassroom(Long classroomId) {
+        classroomDao.deleteById(classroomId);
+    }
     //     List<Classroom> classroomList = getAllClassroom();
     //     HashMap<Long, int[]> eventMap = new HashMap<Long, int[]>();
     //     for(Classroom classroom: classroomList){

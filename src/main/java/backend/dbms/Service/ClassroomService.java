@@ -11,5 +11,8 @@ public interface ClassroomService {
     Optional<Classroom> getByClassroomId(Long id);
     List<Classroom> getAllClassroom();
     List<Pair> findBookedClassroom(Date date);
-    public Optional<Classroom> getByClassroomName(String roomName);
+    Optional<Classroom> getByClassroomName(String roomName);
+    void createClassroom(Classroom classroom);
+    void updateClassroom(Classroom classroom);
+    void deleteClassroom(Long classroomId);
 }
