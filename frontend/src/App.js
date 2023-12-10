@@ -33,6 +33,12 @@ import { useCallback } from "react";
 import Courses from "course/courses";
 import CreateCourse from "course/createCourse";
 import EditCourse from "course/editCourse";
+import Classrooms from "classroom/classrooms";
+import CreateClassroom from "classroom/createClassroom";
+import EditClassroom from "classroom/editClassroom";
+import Users from "admin/user/users";
+import UserEvent from "admin/user/UserEvent";
+import UserParticipation from "admin/user/UserParticipation";
 
 
 const drawerWidth = 240;
@@ -45,203 +51,6 @@ const DrawerHeader = styled('div')(({ theme }) => ({
   ...theme.mixins.toolbar,
   justifyContent: 'flex-end',
 }));
-
-// export default function App() {
-//   const [open, setOpen] = useState(false);
-//   const { user: currentUser } = useSelector((state) => state.auth);
-//   const dispatch = useDispatch();
-
-//   const handleDrawerOpen = () => {
-//     setOpen(true);
-//   };
-
-//   const handleDrawerClose = () => {
-//     setOpen(false);
-//     // const decodedJwt = JSON.parse(atob(user.accessToken.split(".")[1]));
-
-//     // console.log(decodedJwt.exp  )
-//   };
-  
-//   const [verified, setVerified] = useState(false);
-//   const [user, setUser] = useState(false);
-//   const [admin, setAdmin] = useState(false);
-//   const [provider, setProvider] = useState(false);
-
-//   const logOut = useCallback(() => {
-//       dispatch(AuthService.logout())
-//   },[dispatch]);
-
-
-//   useEffect(() => {
-//     const user = AuthService.getCurrentUser();
-//     console.log(user)
-//     if (user) {
-//       setVerified(true);
-//       if(user.roles.includes('ROLE_USER')){
-//         setUser(true)
-//       }
-//       else if(user.roles.includes('ROLE_ADMIN')){
-//         setAdmin(true)
-//       }
-//       else if(user.roles.includes('ROLE_PROVIDER')){
-//         setProvider(true)
-//       }
-//     }
-
-//     eventBus.on("logout", () => {
-//       logOut();
-//     });
-
-//     return () => {
-//       eventBus.remove("logout");
-//     };
-//   }, [user,logOut]);
-
- 
-
-//   return (
-    
-//     <>
-//     <AppBar position="fixed" open={open}>
-//       <Toolbar>
-//         <IconButton
-//           color="inherit"
-//           aria-label="open drawer"
-//           onClick={handleDrawerOpen}
-//           edge="start"
-//           sx={{ mr: 2, ...(open && { display: 'none' }) }}
-//         >
-//           <MenuIcon />
-//         </IconButton>
-//         <Typography variant="h6" noWrap component="div" >
-//           I'm in
-//         </Typography>
-//         {verified?
-//         // <Box display='flex' justifyContent='right'>
-//           <Button  display='flex' variant="h6" onClick={logOut} sx={{ marginLeft: "auto" }}>
-//             Logout
-//           </Button>:""
-//         // </Box>
-//       }
-//       </Toolbar>
-//     </AppBar>
-//     <Drawer
-//         sx={{
-//           width: drawerWidth,
-//           flexShrink: 0,
-//           '& .MuiDrawer-paper': {
-//             width: drawerWidth,
-//             boxSizing: 'border-box',
-//           },
-//         }}
-//         variant="persistent"
-//         anchor="left"
-//         open={open}
-//       >
-//         <DrawerHeader>
-//           <IconButton onClick={handleDrawerClose}>
-//             {<ChevronLeftIcon /> }
-//           </IconButton>
-//         </DrawerHeader>
-//         <Divider />
-//         <List>
-//             {verified?"":(
-//               <>
-//             <ListItem  disablePadding >
-//               <ListItemButton to='/register'>
-//                 <ListItemIcon>
-                  
-//                 </ListItemIcon>
-//                 <ListItemText primary={"Register"} />
-//               </ListItemButton>
-//             </ListItem>
-//             <ListItem  disablePadding >
-//               <ListItemButton to='/login'>
-//                 <ListItemIcon>
-//                   {<LoginIcon></LoginIcon>}
-//                 </ListItemIcon>
-//                 <ListItemText primary={"Login"} />
-//               </ListItemButton>
-//             </ListItem>
-//             </>
-//             )}
-//             {user?(
-//               <>
-//             <ListItem  disablePadding >
-//               <ListItemButton to='/home'>
-//                 <ListItemIcon>
-                  
-//                 </ListItemIcon>
-//                 <ListItemText primary={"Home"} />
-//               </ListItemButton>
-//             </ListItem>
-//             <ListItem  disablePadding >
-//               <ListItemButton to="/events">
-//                 <ListItemIcon>
-              
-//                 </ListItemIcon>
-//                 <ListItemText primary={"活動"} />
-//               </ListItemButton>
-//             </ListItem>
-//             <ListItem  disablePadding >
-//               <ListItemButton to="/chooseClassroom">
-//                 <ListItemIcon>
-              
-//                 </ListItemIcon>
-//                 <ListItemText primary={"創建活動"} />
-//               </ListItemButton>
-//             </ListItem>
-//             <ListItem  disablePadding >
-//               <ListItemButton to="/myEvents">
-//                 <ListItemIcon>
-              
-//                 </ListItemIcon>
-//                 <ListItemText primary={"我舉辦的活動"} />
-//               </ListItemButton>
-//             </ListItem>
-//             <ListItem  disablePadding >
-//               <ListItemButton to="/myParticipation">
-//                 <ListItemIcon>
-              
-//                 </ListItemIcon>
-//                 <ListItemText primary={"我參加的活動"} />
-//               </ListItemButton>
-//             </ListItem>
-//             </>
-//             ):""}
-          
-            
-//         </List>
-//         <Divider />
-//     </Drawer>
-//     <DrawerHeader />
-//     <Container>
-//           {/* <Box  display="flex"
-//               justifyContent="center"
-//               alignItems="center"> */}
-//             <Routes>
-//                 <Route exact path="/" element={<Home />} />
-//                 <Route exact path="/home" element={<Home />} />
-//                 <Route exact path="/login" element={<Login /> } />
-//                 <Route exact path="/register" element={<Register />} />
-//                 <Route exact path="/profile" element={<Profile />} />
-//                 <Route path="/events" element={<SearchPage />} />
-//                 <Route path="/createEvents" element={<CreateEvent />} />
-//                 <Route path="/myEvents" element={<MyEvents />} />
-//                 <Route path="/myParticipation" element={<MyParticipation />} />
-//                 <Route path="chooseClassroom" element = {<BookedClassroom />} />
-//                 {/* <Route exact path={["/", "/home"]} component={Home} />
-//                 <Route exact path="/register" component={Register} />
-//                 <Route exact path="/profile" component={Profile} />
-//                 */}
-//             </Routes>
-//             {/* </Box> */}
-//         </Container>
-//         <AuthVerify logOut={logOut}/>
-//       </>
-//   );
-// }
-
 
 
 
@@ -423,8 +232,26 @@ export default class App extends Component {
               </ListItem>
               </>
               ):""}
-              {admin?"":""
-
+              {admin?(
+                <>
+                <ListItem  disablePadding >
+                <ListItemButton to="/classrooms">
+                  <ListItemIcon>
+                
+                  </ListItemIcon>
+                  <ListItemText primary={"教室管理"} />
+                </ListItemButton>
+              </ListItem>
+              <ListItem  disablePadding >
+                <ListItemButton to="/courses">
+                  <ListItemIcon>
+                
+                  </ListItemIcon>
+                  <ListItemText primary={"課程管理"} />
+                </ListItemButton>
+              </ListItem>
+                </>
+              ):""
               }
               
           </List>
@@ -438,14 +265,21 @@ export default class App extends Component {
               <Routes>
                   <Route exact path="/login" element={<Login /> } />
                   <Route exact path="/register" element={<Register />} />
-                  <Route path="/events" element={<SearchPage />} />
-                  <Route path="/createEvents" element={<CreateEvent />} />
-                  <Route path="/myEvents" element={<MyEvents />} />
-                  <Route path="/myParticipation" element={<MyParticipation />} />
-                  <Route path="/chooseClassroom" element = {<BookedClassroom />} />
-                  <Route path="/courses" element = {<Courses />} />
-                  <Route path="/createCourse" element = {<CreateCourse />} />
-                  <Route path="/editCourse" element = {<EditCourse />} />
+                  <Route exact path="/events" element={<SearchPage />} />
+                  <Route exact path="/createEvents" element={<CreateEvent />} />
+                  <Route exact path="/myEvents" element={<MyEvents />} />
+                  <Route exact path="/myParticipation" element={<MyParticipation />} />
+                  <Route exact path="/chooseClassroom" element = {<BookedClassroom />} />
+                  <Route exact path="/courses" element = {<Courses />} />
+                  <Route exact path="/createCourse" element = {<CreateCourse />} />
+                  <Route exact path="/editCourse" element = {<EditCourse />} />
+                  <Route exact path="/classrooms" element = {<Classrooms />} />
+                  <Route exact path="/createClassroom" element = {<CreateClassroom />} />
+                  <Route exact path="/editClassroom" element = {<EditClassroom />} />
+                  <Route exact path="/admin/users" element={<Users/>}/>
+                  <Route exact path="/admin/user/studyevent" element={<UserEvent/>}/>
+                  <Route exact path="/admin/user/participation" element={<UserParticipation/>}/>
+
                   {/* <Route exact path={["/", "/home"]} component={Home} />
                   <Route exact path="/register" component={Register} />
                   <Route exact path="/profile" component={Profile} />

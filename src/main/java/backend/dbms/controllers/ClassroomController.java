@@ -3,11 +3,14 @@ package backend.dbms.controllers;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.sql.Date;
 
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -28,6 +31,7 @@ import backend.dbms.Service.Impl.ClassroomImpl;
 import backend.dbms.Service.Impl.StudyEventPeriodImpl;
 import backend.dbms.controllers.Request.ResDate;
 import backend.dbms.models.Classroom;
+import backend.dbms.models.Course;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
@@ -49,17 +53,33 @@ public class ClassroomController {
     }
 
     @PostMapping("/classroom")
-    public void createClassroom(@RequestBody Classroom classroom){
-        classroomImpl.createClassroom(classroom);
+    public Long createClassroom(@RequestBody Classroom classroom){
+        return classroomImpl.createClassroom(classroom);
     }
 
     @PutMapping("/classroom")
-    public void updateClassroom(@RequestBody Classroom classroom){
-        classroomImpl.updateClassroom(classroom);
+    public Long updateClassroom(@RequestBody Classroom classroom){
+        return classroomImpl.updateClassroom(classroom);
     }
 
     @DeleteMapping("/classroom")
     public void deleteClassroom(@RequestParam(value = "classroomId") Long classroomId){
         classroomImpl.deleteClassroom(classroomId);
+    }
+
+    @GetMapping("/classroom")
+    public Classroom getClassroomById(@RequestParam Long classroomId){
+        return classroomImpl.getByClassroomId(classroomId).get();
+    }
+
+    @GetMapping("/classrooms")
+    public Page<Classroom> search(@RequestParam int page, @RequestParam int row,@RequestParam(required = false) Long classroomId, @RequestParam(required = false) String roomName, @RequestParam(required = false) String buildingName) throws UnsupportedEncodingException{
+        if(roomName!=null){
+            roomName = URLDecoder.decode(roomName, "UTF-8");
+        }
+        if(buildingName!=null){
+            buildingName = URLDecoder.decode(buildingName, "UTF-8");
+        }
+        return classroomImpl.searchClassroom(classroomId, roomName, buildingName, page-1, row);
     }
 }

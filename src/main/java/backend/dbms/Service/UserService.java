@@ -3,6 +3,9 @@ package backend.dbms.Service;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.Page;
+
+import backend.dbms.controllers.DTO.UserDTO;
 import backend.dbms.models.User;
 
 public interface UserService {
@@ -17,4 +20,6 @@ public interface UserService {
     long count();
 
     List<User> getAllUsers();
+
+    Page<UserDTO> searchUser(Long userId, String userName, String email,  int page, int row);
 }

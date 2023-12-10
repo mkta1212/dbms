@@ -22,6 +22,7 @@ import Button from '@mui/material/Button'
 import axios from 'axios';
 import authHeader from 'authService/authHeader'
 import AddIcon from "@mui/icons-material/Add";
+import { Navigate } from 'react-router-dom'
 
 function deleteBtn(courseId){
   function deleteCourse(courseId){
@@ -46,13 +47,13 @@ function deleteBtn(courseId){
   )
 }
 function Row (props) {
-    const { course } = props
+    const { user } = props
  
     // 設定使用者下拉式選單開闔
     const [open, setOpen] = useState(false)
     return (
       <>
-        <TableRow sx={{ borderBottom: 1 }} id={'courseId' +course.courseId}>
+        <TableRow sx={{ borderBottom: 1 }} id={'userId' +user.userId}>
           <TableCell>
             <IconButton
               aria-label='expand row'
@@ -62,21 +63,21 @@ function Row (props) {
               {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
             </IconButton>
           </TableCell>
-          <TableCell align='right'>{course.courseId}</TableCell>
-          <TableCell align='right'>{course.courseName}</TableCell>
-          <TableCell align='right'>{course.instructorName}</TableCell>
-          <TableCell align='right'>{course.lectureTime}</TableCell>
-          <TableCell align='right'>{course.departmentName}</TableCell>
-          <TableCell align='right'><Button onClick={()=>window.location.href="editCourse?courseId="+course.courseId}>編輯課程</Button></TableCell>
-          <TableCell align='right'>{deleteBtn(course.courseId)}</TableCell>
+          <TableCell align='right'>{user.userId}</TableCell>
+          <TableCell align='right'>{user.userName}</TableCell>
+          <TableCell align='right'>{user.email}</TableCell>
+          <TableCell align='right'><Button onClick={()=>window.location.href="/admin/user/studyevent?userId="+user.userId}>{user.totalHold}</Button></TableCell>
+          <TableCell align='right'><Button onClick={()=>window.location.href="/admin/user/participation?userId="+user.userId}>{user.totalParticipation}</Button></TableCell>
+          {/* <TableCell align='right'><Button onClick={()=>window.location.href="editCourse?courseId="+course.courseId}>編輯課程</Button></TableCell> */}
+          {/* <TableCell align='right'>{deleteBtn(course.courseId)}</TableCell> */}
         </TableRow>
   
       </>
     )
   }
 
-export default function CourseTable(props){
-    const{ courses, page, setPage, totalPage }=props
+export default function UserTable(props){
+    const{ users, page, setPage, totalPage }=props
     console.log(props)
     return (
         <TableContainer component={Paper}>
@@ -87,28 +88,16 @@ export default function CourseTable(props){
             <TableRow>
                 
               <TableCell />
-              <TableCell align='right'>課程代號</TableCell>
-              <TableCell align='right'>課程名稱</TableCell>
-              <TableCell align='right'>授課教師</TableCell>
-              <TableCell align='right'>開課時間</TableCell>
-              <TableCell align='right'>開課對象</TableCell>
-              <TableCell 
-                align='right'
-                colSpan={2}
-               >
-                <Button
-                  variant="outlined"
-                  startIcon={<AddIcon />}
-                  sx={{ lineHeight: 0 }}
-                  onClick={()=>window.location.href = 'createCourse'}
-                >
-                  新增課程
-                </Button>
-              </TableCell>
+              <TableCell align='right'>用戶代號</TableCell>
+              <TableCell align='right'>用戶名稱</TableCell>
+              <TableCell align='right'>信箱</TableCell>
+              <TableCell align='right'>舉辦活動次數</TableCell>
+              <TableCell align='right'>參與活動次數</TableCell>
+            
             </TableRow>
           </TableHead>
           <TableBody>
-            {courses.map((course)=><Row key={course.courseId} course={course} />)} 
+            {users.map((user)=><Row key={user.userId} user={user} />)} 
           </TableBody>
         </Table>
         <Box display='flex' justifyContent='center'>

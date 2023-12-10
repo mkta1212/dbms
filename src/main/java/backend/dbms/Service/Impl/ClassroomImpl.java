@@ -7,11 +7,16 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import backend.dbms.Service.ClassroomService;
 import backend.dbms.Service.Pair;
 import backend.dbms.models.Classroom;
+import backend.dbms.models.Course;
 import backend.dbms.models.StudyEvent;
 import backend.dbms.models.StudyEventPeriod;
 import backend.dbms.repository.ClassroomDao;
@@ -73,17 +78,24 @@ public class ClassroomImpl implements ClassroomService {
         return bookedList;
     }
     @Override
-    public void createClassroom(Classroom classroom) {
-        classroomDao.save(classroom);
+    public Long createClassroom(Classroom classroom) {
+        return classroomDao.save(classroom).getClassroomId();
     }
     @Override
-    public void updateClassroom(Classroom classroom) {
-        classroomDao.save(classroom);
+    public Long updateClassroom(Classroom classroom) {
+        return classroomDao.save(classroom).getClassroomId();
     }
     @Override
     public void deleteClassroom(Long classroomId) {
         classroomDao.deleteById(classroomId);
     }
+
+    @Override
+    public Page<Classroom> searchClassroom(Long classroomId, String roomName, String buildingName, int page, int row){
+        Pageable pageable = PageRequest.of(page,row, Sort.by("buildingName"));
+        return classroomDao.findByMultiCon(classroomId, roomName, buildingName, pageable);
+    }
+
     //     List<Classroom> classroomList = getAllClassroom();
     //     HashMap<Long, int[]> eventMap = new HashMap<Long, int[]>();
     //     for(Classroom classroom: classroomList){

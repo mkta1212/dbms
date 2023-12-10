@@ -7,33 +7,30 @@ import { NavLink } from 'react-bootstrap'
 import authHeader from 'authService/authHeader'
 import IconButton from "@mui/material/IconButton";
 import SearchIcon from "@mui/icons-material/Search";
-import CourseTable from './courseTable';
 import Grid from '@mui/material/Grid';
+import UserTable from './userTable';
 
 
 
 
 
 
-export default function Courses () {
+export default function Users () {
   const [form, setForm] = useState([])
   const [page, setPage] = useState(1)
   const [totalPage, setTotalPage] = useState(0)
-  const [courseId, setCourseId] = useState(null)
-  const [courseName, setCourseName] = useState(null)
-  const [instructorName, setInstructorName] = useState(null)
-  const [departmentName, setDepartmentName] = useState(null)
+  const [userId, setUserId] = useState(null)
+  const [userName, setUserName] = useState(null)
+  const [email, setEmail] = useState(null)
 
-  async function SearchCourse () {
-    console.log(instructorName)
-     axios.get('http://localhost:8080/api/courses' ,{ 
+  async function SearchUser () {
+     axios.get('http://localhost:8080/api/admin/users' ,{ 
       params:{
         page:page,
         row:20,
-        ...(courseId!==null&& courseId && {courseId:courseId}),
-        ...(courseName!==null&& courseName && {courseName:encodeURI(courseName)}),
-        ...(instructorName!==null&& instructorName&& {instructorName:encodeURI(instructorName)}),
-        ...(departmentName!==null && departmentName && {departmentName:encodeURI(departmentName)}),
+        ...(userId!==null&& userId && {userId:userId}),
+        ...(userName!==null&& userName && {userName:encodeURI(userName)}),
+        ...(email!==null&& email&& {email:encodeURI(email)}),
        },
         headers: authHeader() })
         .then((res) => {
@@ -47,7 +44,7 @@ export default function Courses () {
             })
 }
   useEffect(() => {
-    SearchCourse(page)
+    SearchUser(page)
   }, [page])
 
   return (
@@ -67,39 +64,31 @@ export default function Courses () {
               alignItems='center'>
                 <Grid item >
                     <TextField
-                      id='courseId'
-                      label='課程代號'
-                      value={courseId}
-                      onChange={(e)=>setCourseId(e.target.value)}
+                      id='userId'
+                      label='用戶代號'
+                      value={userId}
+                      onChange={(e)=>setUserId(e.target.value)}
                     />
                 </Grid>
                 <Grid item >
                     <TextField
-                      id='courseName'
-                      label='課程名稱'
-                      value={courseName}
-                      onChange={(e)=>setCourseName(e.target.value)}
+                      id='userName'
+                      label='用戶名稱'
+                      value={userName}
+                      onChange={(e)=>setUserName(e.target.value)}
                     />
                 </Grid>
                 <Grid item >
                     <TextField
-                      id='instructorName'
-                      label='授課教師'
-                      value={instructorName}
-                      onChange={(e)=>{setInstructorName(e.target.value)
+                      id='email'
+                      label='信箱'
+                      value={email}
+                      onChange={(e)=>{setEmail(e.target.value)
                         console.log(e.target.value)}}
                     />
                 </Grid>
                 <Grid item >
-                    <TextField
-                      id='departmentName'
-                      label='開課對象'
-                      value={departmentName}
-                      onChange={(e)=>setDepartmentName(e.target.value)}
-                    />
-                </Grid>
-                <Grid item >
-                    <IconButton  aria-label="search" onClick={SearchCourse} >
+                    <IconButton  aria-label="search" onClick={SearchUser} >
                       <SearchIcon />
                     </IconButton>
                   </Grid>
@@ -109,7 +98,7 @@ export default function Courses () {
                 </div>
               </div>
             <br></br>
-        <CourseTable courses={form} page={page} setPage={setPage} totalPage={totalPage} setTotalPage={setTotalPage} />
+        <UserTable users={form} page={page} setPage={setPage} totalPage={totalPage} setTotalPage={setTotalPage} />
     </>
   )
 }

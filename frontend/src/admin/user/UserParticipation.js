@@ -25,26 +25,19 @@ import EventTable from './eventTable'
 import ParticipationTable from './participationTable'
 
 
-async function SearchParticipation (status, page) {
-  return await axios.get('http://localhost:8080/api/myjoins',
+async function SearchParticipation (userId,status,page) {
+  return await axios.get('http://localhost:8080/api/admin/user/joins',
   { params:{
     page:page,
     row:20,
+    userId:userId,
     status: status
    },
     headers: authHeader() })
     .then((data) => { return data.data })
 }
 
-async function deleteParticipant(id) {
-  if (window.confirm('確定要取消參加？')) {
-    const url = 'http://localhost:8080/api/joins'
-    await axios.delete(url,{ headers: authHeader(),data:{eventId:id} }).then((data) => {
-      console.log(data)
-      window.location.reload()
-    })
-  }
-}
+
 
 async function formParticipation (participation) {
   console.log(participation)
@@ -68,14 +61,14 @@ async function formParticipation (participation) {
   }
 }
 
-export default function MyParticipation () {
+export default function UserParticipation () {
   const [form, setForm] = useState([])
   const [panel, setPanel] = useState("Ongoing");
   const [page, setPage] = useState(1)
   const [totalPage, setTotalPage] = useState(0)
-
-  const fetchData = async (status) => {
-    const participations = await SearchParticipation(status,page)
+  const [userId, setUserId] = useState()
+  const fetchData = async (userId,status,page) => {
+    const participations = await SearchParticipation(userId,status,page)
     console.log(participations)
     Promise.all(participations.content.map((participation) => (formParticipation(participation)))).then((res) => {
       console.log(res)
@@ -87,7 +80,17 @@ export default function MyParticipation () {
       })
   }
   useEffect(() => {
-    fetchData("Ongoing",page)
+    let url = new URL(window.location.href);
+        let params = url.searchParams;
+        var userId 
+        for (let pair of params.entries()) {
+            if(pair[0]==="userId"){
+              userId=pair[1]
+              setUserId(userId)
+            }   
+        }
+      
+    fetchData(userId,"Ongoing",page)
   }, [page])
 
   return (
@@ -96,7 +99,7 @@ export default function MyParticipation () {
         <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
           <TabList onChange={(event, value)=>{
             setPanel(value)
-            fetchData(value)
+            fetchData(userId,value,page)
             }} 
           aria-label="lab API tabs example">
             <Tab label="進行中" value="Ongoing" />
@@ -104,11 +107,11 @@ export default function MyParticipation () {
           </TabList>
         </Box>
         <TabPanel value="Ongoing">
-          <ParticipationTable participations={form} page={page} setPage={setPage} totalPage={totalPage} status={panel} deleteParticipant={deleteParticipant}/>
+          <ParticipationTable participations={form} page={page} setPage={setPage} totalPage={totalPage} status={panel} />
         
       </TabPanel>
       <TabPanel value="Finished">
-      <ParticipationTable participations={form} page={page} setPage={setPage} totalPage={totalPage} status={panel} deleteParticipant={deleteParticipant}/>
+      <ParticipationTable participations={form} page={page} setPage={setPage} totalPage={totalPage} status={panel} />
       </TabPanel>
       </TabContext>
     </>

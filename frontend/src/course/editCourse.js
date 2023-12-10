@@ -61,7 +61,7 @@ export default function EditCourse (){
         console.log(response.status===200)
         if(response.status===200){
             alert("更信成功\n課程代號為："+response.data)
-            window.location.href='/home'
+            window.location.href='/courses'
         }
         
       })

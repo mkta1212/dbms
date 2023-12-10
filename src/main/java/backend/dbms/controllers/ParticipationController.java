@@ -43,6 +43,9 @@ public class ParticipationController {
     private UserImpl userImpl;
 
     @Autowired
+    private UserDao userRepository;
+
+    @Autowired
     private StudyEventImpl eventImpl;
 
     @Autowired
@@ -64,6 +67,13 @@ public class ParticipationController {
     public Page<MyParticipationDTO> findMyParticipation(@RequestHeader("Authorization") String token,@RequestParam int page, @RequestParam int row, @RequestParam Status status){
         String userName = jwtUtils.getUserNameFromJwtToken(token.substring(7, token.length()));
         User user = userImpl.getByUsername(userName).get();
+        return participationImpl.getMyParticipation(user, page-1, row, status);
+    }
+    
+    @GetMapping("/admin/user/joins")
+    @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
+    public Page<MyParticipationDTO> getUserParticipation(@RequestParam Long userId,@RequestParam int page, @RequestParam int row, @RequestParam Status status){
+        User user = userRepository.findById(userId).get();
         return participationImpl.getMyParticipation(user, page-1, row, status);
     }
 

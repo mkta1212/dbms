@@ -6,34 +6,62 @@ import TextField from '@mui/material/TextField'
 import { useEffect, useState } from 'react'
 import authHeader from 'authService/authHeader';
 
-
-
-export default function CreateCourse (){
-
-    const [courseName, setCourseName] = useState("")
-    const [instructorName, setInstructorName] = useState("")
-    const [lectureTime, setLectureTime] = useState("")
-    const [departmentName, setDepartmentName] = useState("")
+async function SearchClassroom(classroomId){
+    return axios.get('http://localhost:8080/api/classroom',{
+        params:{
+          classroomId
+        },
+        headers: authHeader() 
+    })
+    .then((res)=>{return res.data})
     
- 
+} 
+
+export default function EditClassroom (){
+
+    const [classroom, setClassroom] = useState({})
+    const [roomName, setRoomName] = useState("")
+    const [buildingName, setBuildingName] = useState("")
+    const [floorNumber, setFloorNumber] = useState("")
+    const [capacitySize, setCapacitySize] = useState("")
+    
+    useState(()=>{
+        let url = new URL(window.location.href);
+        let params = url.searchParams;
+        var classroomId
+        for (let pair of params.entries()) {
+            if(pair[0]==="classroomId"){
+              classroomId = pair[1]
+            }   
+        }
+        SearchClassroom(classroomId).then((data)=>{
+            setClassroom(data)
+            setRoomName(data.roomName)
+            setBuildingName(data.buildingName)
+            setFloorNumber(data.floorNumber)
+            setCapacitySize(data.capacitySize)
+
+        })
+    })
 
 
 
     async function HandleClick (e) {
       e.preventDefault()
-      const course = {
-        courseName,
-        instructorName,
-        lectureTime,
-        departmentName    
+      const newClassroom = {
+        classroomId:classroom.classroomId,
+        roomName,
+        buildingName,
+        floorNumber,
+        capacitySize    
       }
-      console.log(course)
-      await axios.post('http://localhost:8080/api/course',course ,{ headers: authHeader() })
+      console.log(newClassroom)
+      await axios.put('http://localhost:8080/api/classroom',newClassroom ,{ headers: authHeader() })
       .then((response)=>{
         console.log(response.status===200)
         if(response.status===200){
-            alert("成功新增\n課程代號為："+response.data)
-            window.location.href='/courses'
+            alert("更信成功\n課程代號為："+response.data)
+            window.location.href='/classrooms'
         }
         
       })
@@ -66,17 +94,17 @@ export default function CreateCourse (){
                     課程資訊
                     </h5>
                     <div className='card-body'>
-                        <div className='row'>
+                    <div className='row'>
                             <div className='col-md-6'>
                                 <div className='form-group'>
-                                    <label htmlFor='name'>課程名稱</label>
+                                    <label htmlFor='name'>教室名稱</label>
                                 </div>
                                 <div className='col'>
                                     <TextField  
-                                        id = "courseName"
+                                        id = "roomName"
                                         fullWidth
-                                        value = {courseName}
-                                        onChange={(e)=>setCourseName(e.target.value)}
+                                        value = {roomName}
+                                        onChange={(e)=>setRoomName(e.target.value)}
                                     />
                                 </div>
                             </div>
@@ -89,26 +117,26 @@ export default function CreateCourse (){
                         <div className='row'>
                             <div className='col-md-4'>
                                 <div className='form-group'>
-                                    <label htmlFor='name'>授課老師</label>
+                                    <label htmlFor='name'>建物名稱</label>
                                 </div>
                                 <div className='col'>
                                     <TextField  
-                                        id = "instructorName"
-                                        value = {instructorName}
-                                        onChange={(e)=>setInstructorName(e.target.value)}
+                                        id = "buildingName"
+                                        value = {buildingName}
+                                        onChange={(e)=>setBuildingName(e.target.value)}
                                     />
                             
                                 </div>
                             </div>
                             <div className='col-md-4'>
                                 <div className='form-group'>
-                                    <label htmlFor='name'>授課時間</label>
+                                    <label htmlFor='name'>所在樓層</label>
                                 </div>
                                 <div className='col'>
                                     <TextField  
-                                        id = "lectureTime"
-                                        value = {lectureTime}
-                                        onChange={(e)=>setLectureTime(e.target.value)}
+                                        id = "floorNumber"
+                                        value = {floorNumber}
+                                        onChange={(e)=>setFloorNumber(e.target.value)}
                                     />
                                 </div>
                             </div>
@@ -116,13 +144,13 @@ export default function CreateCourse (){
 
                             <div className='col-md-4'>
                                 <div className='form-group'>
-                                    <label htmlFor='name'>開課對象</label>
+                                    <label htmlFor='name'>容納上限</label>
                                 </div>
                                 <div className='col'>
                                     <TextField  
-                                        id = "departmentName"
-                                        value = {departmentName}
-                                        onChange={(e)=>setDepartmentName(e.target.value)}
+                                        id = "capacitySize"
+                                        value = {capacitySize}
+                                        onChange={(e)=>setCapacitySize(e.target.value)}
                                     />
                             
                                 </div>

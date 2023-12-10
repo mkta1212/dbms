@@ -81,5 +81,12 @@ public class StudyEventController {
         return eventImpl.getMyEvent(user,page-1,row,status);
     }
 
+    @GetMapping("/admin/user/studyEvents")
+    @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
+    public Page<MyEventDTO> getUserStudyEvents(@RequestParam Long userId,@RequestParam int page, @RequestParam int row, @RequestParam Status status) {
+        User user = userRepository.findById(userId).get();
+        return eventImpl.getMyEvent(user,page-1,row,status);
+    }
+
     
 }
