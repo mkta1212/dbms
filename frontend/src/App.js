@@ -1,5 +1,5 @@
 import React, { Component, useState, useEffect} from "react";
-import { Routes, Route, Link, Router } from "react-router-dom";
+import { Routes, Route, Link, Router, Navigate } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./App.css";
 
@@ -105,6 +105,7 @@ export default class App extends Component {
       user: false,
       admin: false,
     });
+    window.location.href="/login"
   }
 
   render() {
@@ -234,7 +235,23 @@ export default class App extends Component {
               ):""}
               {admin?(
                 <>
-                <ListItem  disablePadding >
+              <ListItem  disablePadding >
+                <ListItemButton to="/events">
+                  <ListItemIcon>
+                
+                  </ListItemIcon>
+                  <ListItemText primary={"活動查詢"} />
+                </ListItemButton>
+              </ListItem>
+              <ListItem  disablePadding >
+                <ListItemButton to="/admin/users">
+                  <ListItemIcon>
+                
+                  </ListItemIcon>
+                  <ListItemText primary={"用戶查詢"} />
+                </ListItemButton>
+              </ListItem>
+              <ListItem  disablePadding >
                 <ListItemButton to="/classrooms">
                   <ListItemIcon>
                 

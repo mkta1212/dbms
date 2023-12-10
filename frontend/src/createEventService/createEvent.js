@@ -163,7 +163,7 @@ export default function CreateEvent (){
       })
       .then(()=>{
         alert("成功新增")
-        window.location.href='/home'
+        // window.location.href='/home'
       })
     //   navigate('/')
     };

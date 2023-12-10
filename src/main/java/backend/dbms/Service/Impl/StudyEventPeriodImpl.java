@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-
+import org.springframework.data.jpa.repository.Lock;
 import org.springframework.stereotype.Service;
 
 import backend.dbms.Service.Pair;
@@ -16,6 +16,8 @@ import backend.dbms.models.StudyEvent;
 import backend.dbms.models.StudyEventPeriod;
 import backend.dbms.repository.EventId;
 import backend.dbms.repository.StudyEventPeriodDao;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.LockModeType;
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
@@ -29,6 +31,8 @@ public class StudyEventPeriodImpl implements StudyEventPeriodService {
     public void createEventPeriod(StudyEventPeriod eventPeriod){
         eventPeriodDao.save(eventPeriod);
     }
+    @Autowired
+    EntityManager em;
     @Override
     public boolean checkTimeAvailable(Classroom classroom, Date date, List<Integer> periodList) {
         // List<EventId> eventList = studyEventImpl.getBookedPeriod(classroom, date);
@@ -43,7 +47,13 @@ public class StudyEventPeriodImpl implements StudyEventPeriodService {
         //         }
         //     }   
         // }
-        List<StudyEventPeriod> bookedPeriodList = eventPeriodDao.findByClassroomAndEventDate(classroom, date);
+        // en.createNativeQuery("LOCK TABLE study_event_period write").executeUpdate();
+        List<StudyEventPeriod> bookedPeriodList = em.createQuery("Select sep From StudyEventPeriod as sep where sep.classroom=:classroom and sep.eventDate=:date",StudyEventPeriod.class)
+            .setParameter("classroom", classroom)
+            .setParameter("date", date)
+            .setLockMode(LockModeType.PESSIMISTIC_WRITE)
+            .getResultList();
+        // List<StudyEventPeriod> bookedPeriodList = eventPeriodDao.findByClassroomAndEventDate(classroom, date);
         for(StudyEventPeriod bookedPeriod: bookedPeriodList){
             if(periodList.contains(bookedPeriod.getEventPeriod())){
                 return false;

@@ -17,6 +17,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.repository.Lock;
 import org.springframework.stereotype.Service;
 
 import backend.dbms.Service.StudyEventService;
@@ -32,8 +33,10 @@ import backend.dbms.models.User;
 import backend.dbms.repository.StudyEventDao;
 import backend.dbms.repository.StudyEventPeriodDao;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.LockModeType;
 import jakarta.persistence.Query;
 import jakarta.persistence.TypedQuery;
+import jakarta.transaction.Transactional;
 import backend.dbms.repository.EventId;
 import lombok.NoArgsConstructor;
 
@@ -49,6 +52,9 @@ public class StudyEventImpl implements StudyEventService{
 
     @Autowired
     private StudyEventPeriodDao eventPeriodDao;
+
+    @Autowired
+    private StudyEventPeriodImpl eventPeriodImpl;
 
     @Autowired
     private ClassroomImpl classroomImpl;
@@ -128,16 +134,29 @@ public class StudyEventImpl implements StudyEventService{
         eventDao.save(event);
     }
 
+    @Autowired
+    EntityManager en;
+
     @Override
+    // @Lock(LockModeType.PESSIMISTIC_WRITE)
+    @Transactional
     public void createEvent(StudyEventReq eventReq,User user){
         Course course = courseImpl.getByCourseId(eventReq.getCourseId()).get();
         StudyEvent event = new StudyEvent(user, course, eventReq.getUserMax(), eventReq.getContent(),Status.Ongoing);
         Classroom classroom = classroomImpl.getByClassroomName(eventReq.getRoomName()).get();
-        eventDao.save(event);
-        for(Integer period: eventReq.getPeriodList()){
-            StudyEventPeriod eventPeriod = new StudyEventPeriod(event,classroom,eventReq.getEventDate(),period);
-            eventPeriodDao.save(eventPeriod);
+        // en.createNativeQuery("LOCK TABLE study_event_period write").executeUpdate();
+        if(eventPeriodImpl.checkTimeAvailable(classroom, eventReq.getEventDate(), eventReq.getPeriodList())){
+            eventDao.save(event);
+            for(Integer period: eventReq.getPeriodList()){
+                StudyEventPeriod eventPeriod = new StudyEventPeriod(event,classroom,eventReq.getEventDate(),period);
+                eventPeriodImpl.createEventPeriod(eventPeriod);
+            }
         }
+        else{
+            System.out.println("Duplcate");
+        }
+        // en.createNativeQuery("UNLOCK TABLE study_event_period");
+        
     }
 
     @Override
