@@ -21,8 +21,8 @@ import Collapse from '@mui/material/Collapse'
 import IconButton from '@mui/material/IconButton'
 
 function Row (props) {
-    const { participation, status,  } = props
-
+    const { participation, status } = props
+    console.log(participation)
     // 設定使用者下拉式選單開闔
     const [open, setOpen] = useState(false)
 
@@ -96,6 +96,8 @@ export default function ParticipationTable(props){
           </TableHead>
           <TableBody>
             {participations.map((participation)=><Row key={participation.eventId} participation={participation} status={status} deleteParticipant={deleteParticipant} />)} 
+            {(participations.length===0)&&
+            <TableCell colSpan={7} align='center'>無資料</TableCell>}
           </TableBody>
         </Table>
         <Box display='flex' justifyContent='center'>

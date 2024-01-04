@@ -130,33 +130,40 @@ public class StudyEventImpl implements StudyEventService{
     }
 
     @Override
+    @Transactional
     public void createEvent(StudyEvent event){
         eventDao.save(event);
     }
 
     @Autowired
-    EntityManager en;
+    EntityManager em;
 
     @Override
-    // @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Transactional
-    public void createEvent(StudyEventReq eventReq,User user){
+    public String createEvent(StudyEventReq eventReq,User user){
+        // 取得課程
         Course course = courseImpl.getByCourseId(eventReq.getCourseId()).get();
+        // 創建讀書活動
         StudyEvent event = new StudyEvent(user, course, eventReq.getUserMax(), eventReq.getContent(),Status.Ongoing);
+        // 取得教室
         Classroom classroom = classroomImpl.getByClassroomName(eventReq.getRoomName()).get();
-        // en.createNativeQuery("LOCK TABLE study_event_period write").executeUpdate();
+        // StudyEventPeriod sep = em.find(StudyEventPeriod.class, 1);
+        // em.lock(sep, LockModeType.PESSIMISTIC_WRITE);
+        // 確認該時段是否可以預約
         if(eventPeriodImpl.checkTimeAvailable(classroom, eventReq.getEventDate(), eventReq.getPeriodList())){
+            // 新增讀書活動至資料庫
             eventDao.save(event);
+            // 將時段資訊分別存入
             for(Integer period: eventReq.getPeriodList()){
                 StudyEventPeriod eventPeriod = new StudyEventPeriod(event,classroom,eventReq.getEventDate(),period);
                 eventPeriodImpl.createEventPeriod(eventPeriod);
             }
         }
         else{
-            System.out.println("Duplcate");
+            return "Duplicate";
         }
-        // en.createNativeQuery("UNLOCK TABLE study_event_period");
-        
+        // em.lock(sep, LockModeType.NONE);
+        return "Success";        
     }
 
     @Override

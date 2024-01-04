@@ -23,6 +23,7 @@ import axios from 'axios';
 import authHeader from 'authService/authHeader'
 import AddIcon from "@mui/icons-material/Add";
 import { Navigate } from 'react-router-dom'
+import Tooltip from '@mui/material/Tooltip'
 
 function deleteBtn(courseId){
   function deleteCourse(courseId){
@@ -66,8 +67,16 @@ function Row (props) {
           <TableCell align='right'>{user.userId}</TableCell>
           <TableCell align='right'>{user.userName}</TableCell>
           <TableCell align='right'>{user.email}</TableCell>
-          <TableCell align='right'><Button onClick={()=>window.location.href="/admin/user/studyevent?userId="+user.userId}>{user.totalHold}</Button></TableCell>
-          <TableCell align='right'><Button onClick={()=>window.location.href="/admin/user/participation?userId="+user.userId}>{user.totalParticipation}</Button></TableCell>
+          <TableCell align='right'>
+            <Tooltip title="查看使用者舉辦的活動" placement="top">
+              <Button onClick={()=>window.location.href="/admin/user/studyevent?userId="+user.userId}>{user.totalHold}</Button>
+            </Tooltip>
+          </TableCell>
+          <TableCell align='right'>
+            <Tooltip title="查看使用者參與的活動" placement="top">
+              <Button onClick={()=>window.location.href="/admin/user/participation?userId="+user.userId}>{user.totalParticipation}</Button>
+            </Tooltip>
+          </TableCell>
           {/* <TableCell align='right'><Button onClick={()=>window.location.href="editCourse?courseId="+course.courseId}>編輯課程</Button></TableCell> */}
           {/* <TableCell align='right'>{deleteBtn(course.courseId)}</TableCell> */}
         </TableRow>

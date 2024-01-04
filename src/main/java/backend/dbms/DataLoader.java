@@ -60,12 +60,16 @@ public class DataLoader implements CommandLineRunner {
     @Autowired
     private ClassroomImpl classroomImpl;
 
+    @Autowired
+    private ParticipationImpl participationImpl;
+
     @Override
     public void run(String... args) throws Exception {
         if (roleImpl.count() == 0) {
             roleImpl.createRole(new Role(ERole.ROLE_USER));
             roleImpl.createRole(new Role(ERole.ROLE_MODERATOR));
             roleImpl.createRole(new Role(ERole.ROLE_ADMIN));
+            roleImpl.createRole(new Role(ERole.ROLE_PROVIDER));
     }
         
         Random r = new Random();
@@ -80,13 +84,19 @@ public class DataLoader implements CommandLineRunner {
                     role1.add(modRole);
                     user.setRoles(role1);
                     userImpl.createUser(user);
-                    // autoGenerateEvent(user);
                 }
                 
                 
             }           
-
         }
+        // User user = userImpl.getByUsername("111111").get();
+        // List<StudyEvent> events = eventImpl.getByHolder(user);
+        // List<User> userList = userImpl.getAllUsers();
+        // for(User part : userList){
+        //     int id = r.nextInt(events.size())+300000;
+        //     Participation p = new Participation(part, events.get(id), new Date(new java.util.Date().getTime()));
+        //     participationImpl.createParticipation(p);
+        // }
         // createALot();
         // findBookedTime();
         // findBookedClassroom();
@@ -107,12 +117,12 @@ public class DataLoader implements CommandLineRunner {
         Random r = new Random();
         DateFormat df = new SimpleDateFormat("yyyy/MM/dd");
         Date today = new Date(new java.util.Date().getTime());
-        for(int j=0; j<150; j++){
+        for(int j=0; j<100; j++){
                     long courseId = r.nextLong(courseCount);
                     try{
                         Course course = courseImpl.getByCourseId(courseId).get();
-                        int day = r.nextInt(60)+1;
-                        Date eventDate = new Date(today.getTime() - 1000 * 60 * 60 * 24 *day);
+                        int day = r.nextInt(30)+3;
+                        Date eventDate = new Date(today.getTime() + 1000 * 60 * 60 * 24 *day);
                         List<Integer> periodList = new ArrayList<Integer>();
                         int periodLen = r.nextInt(3);
                         int period = r.nextInt(13)+8;
@@ -124,7 +134,7 @@ public class DataLoader implements CommandLineRunner {
                                 .orElseThrow(() -> new RuntimeException("Error: Classroom is not found."));
                         if(eventPeriodImpl.checkTimeAvailable(classroom,eventDate,periodList)){
                             // StudyEvent studyEvent = new StudyEvent(user, course, classroom,eventDate, "", Status.Ongoing);
-                            StudyEvent studyEvent = new StudyEvent(user, course, "", Status.Finished);
+                            StudyEvent studyEvent = new StudyEvent(user, course, "", Status.Ongoing);
                             eventImpl.createEvent(studyEvent);
                             for(int p=0; p<=periodLen; p++){
                                 // StudyEventPeriod eventPeriod = new StudyEventPeriod(studyEvent, period+p);

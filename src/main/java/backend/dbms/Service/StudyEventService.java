@@ -21,7 +21,7 @@ public interface StudyEventService {
     List<StudyEvent> getAllGroups();
     List<StudyEvent> getByHolder(User user);
     void createEvent(StudyEvent event);
-    void createEvent(StudyEventReq event,User user);
+    String createEvent(StudyEventReq event,User user);
     Optional<StudyEvent> getByEventId(Long id);
     long count();
     Page<StudyEventDTO> getAvailableEvent(int page, int row);

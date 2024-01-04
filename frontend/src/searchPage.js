@@ -35,6 +35,7 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DemoContainer, DemoItem } from '@mui/x-date-pickers/internals/demo';
 import authHeader from 'authService/authHeader'
+import AuthService from 'authService/authService'
 
 function Row (props) {
   const { row } = props
@@ -81,7 +82,8 @@ function Row (props) {
         <TableCell align='right'>{event.roomName}</TableCell>
         {/* <TableCell align='right'>{event.max}</TableCell> */}
         {/* <TableCell align='right'><Button onClick={() => { joinEvent(event.eventId) }}>參加活動</Button></TableCell> */}
-        <TableCell align='right'>{btn(event.eventId,event.holderName,myParticipation)}</TableCell>
+        {AuthService.getCurrentUser().roles.includes("ROLE_USER")&&
+        <TableCell align='right'>{btn(event.eventId,event.holderName,myParticipation)}</TableCell>}
       </TableRow>
       <TableRow>
         <TableCell style={{ paddingBottom: 1, paddingTop: 0, margin: 2 }} colSpan={6}>
@@ -291,7 +293,8 @@ export default function SearchPage () {
                   <TableCell align='right'>活動日期</TableCell>
                   <TableCell align='right'>活動時段</TableCell>
                   <TableCell align='right'>活動地點</TableCell>
-                  <TableCell align='right'></TableCell>
+                  {AuthService.getCurrentUser().roles.includes("ROLE_USER")&&
+                  <TableCell align='right'></TableCell>}
                   {/* <TableCell align='right' /> */}
                   
                 </TableRow>

@@ -35,32 +35,21 @@ public class StudyEventPeriodImpl implements StudyEventPeriodService {
     EntityManager em;
     @Override
     public boolean checkTimeAvailable(Classroom classroom, Date date, List<Integer> periodList) {
-        // List<EventId> eventList = studyEventImpl.getBookedPeriod(classroom, date);
-        // List<StudyEvent> eventList = studyEventImpl.getByClassroomAndDate(classroom, date);
-        // for (StudyEvent event : eventList) {
-        //     System.err.println(event.toString());
-        //     for(StudyEventPeriod eventPeriod:eventPeriodDao.findByEvent(event)){
-        //         System.err.println(eventPeriod.toString());
-        //         if (periodList.contains(eventPeriod.getEventPeriod())){
-        //             return false;
 
-        //         }
-        //     }   
-        // }
-        // en.createNativeQuery("LOCK TABLE study_event_period write").executeUpdate();
+        // 查詢該教室當天的預約時段，並將 study_event_period 上鎖
         List<StudyEventPeriod> bookedPeriodList = em.createQuery("Select sep From StudyEventPeriod as sep where sep.classroom=:classroom and sep.eventDate=:date",StudyEventPeriod.class)
             .setParameter("classroom", classroom)
             .setParameter("date", date)
-            .setLockMode(LockModeType.PESSIMISTIC_WRITE)
+            .setLockMode(LockModeType.PESSIMISTIC_READ)
             .getResultList();
         // List<StudyEventPeriod> bookedPeriodList = eventPeriodDao.findByClassroomAndEventDate(classroom, date);
         for(StudyEventPeriod bookedPeriod: bookedPeriodList){
+            // 若想預約的時段出現在已被預約時段 list 中，回傳 false
             if(periodList.contains(bookedPeriod.getEventPeriod())){
                 return false;
             }
         }
         return true;
-        
     }
 
     @Override

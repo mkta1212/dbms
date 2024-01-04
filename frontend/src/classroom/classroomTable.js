@@ -11,13 +11,6 @@ import Stack from '@mui/material/Stack';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import Box from '@mui/material/Box';
-import { useEffect, useState } from 'react'
-import Typography from '@mui/material/Typography'
-import TextField from '@mui/material/TextField'
-import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
-import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp'
-import Collapse from '@mui/material/Collapse'
-import IconButton from '@mui/material/IconButton'
 import Button from '@mui/material/Button'
 import axios from 'axios';
 import authHeader from 'authService/authHeader'
@@ -48,19 +41,9 @@ function Row (props) {
     const { classroom } = props
  
     // 設定使用者下拉式選單開闔
-    const [open, setOpen] = useState(false)
     return (
       <>
         <TableRow sx={{ borderBottom: 1 }} id={'classroomId' +classroom.classroomId}>
-          <TableCell>
-            <IconButton
-              aria-label='expand row'
-              size='small'
-              onClick={() => setOpen(!open)}
-            >
-              {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
-            </IconButton>
-          </TableCell>
           <TableCell align='right'>{classroom.classroomId}</TableCell>
           <TableCell align='right'>{classroom.buildingName}</TableCell>
           <TableCell align='right'>{classroom.floorNumber}</TableCell>
@@ -84,8 +67,6 @@ export default function ClassroomTable(props){
         <Table aria-label='collapsible table'>
           <TableHead>
             <TableRow>
-                
-              <TableCell />
               <TableCell align='right'>教室代號</TableCell>
               <TableCell align='right'>建物名稱</TableCell>
               <TableCell align='right'>所在樓層</TableCell>

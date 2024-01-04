@@ -100,6 +100,8 @@ export default function ParticipationTable(props){
           </TableHead>
           <TableBody>
             {participations.map((participation)=><Row key={participation.eventId} participation={participation} status={status} deleteParticipant={deleteParticipant} />)} 
+            {(participations.length===0)&&
+            <TableCell colSpan={7} align='center'>無資料</TableCell>}
           </TableBody>
         </Table>
         <Box display='flex' justifyContent='center'>

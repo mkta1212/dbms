@@ -3,6 +3,9 @@ package backend.dbms.models;
 import java.util.Date;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
+
+import com.opencsv.bean.CsvBindByName;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -29,17 +32,28 @@ public class Course {
     private Long courseId;
 
     @NonNull
-    @Column(name = "course_name", length = 20)
+    @Column(name = "course_name", length = 20,nullable = false)
+    @CsvBindByName(column = "course_name")
     private String courseName;
 
     @NonNull
     @Column(name = "instructor_name", length = 15)
+    @CsvBindByName(column = "instructor_name")
     private String instructorName;
 
 
     @Column(name = "department_name", length = 20)
+    @CsvBindByName(column = "department_name")
     private String departmentName;
     
     @Column(name = "lecture_time", length = 20)
+    @CsvBindByName(column = "lecture_time")
     private String lectureTime;
+
+    public Course(String courseName, String instructName, String departmentName, String lectureName){
+        this.courseName = courseName;
+        this.instructorName = instructName;
+        this.departmentName = departmentName;
+        this.lectureTime = lectureName;
+    }
 }

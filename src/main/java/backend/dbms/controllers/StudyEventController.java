@@ -68,10 +68,10 @@ public class StudyEventController {
     }
     @PostMapping("/studyEvents")
     @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
-    public void createStudyEvent(@RequestHeader("Authorization") String token,@RequestBody StudyEventReq event){
+    public String createStudyEvent(@RequestHeader("Authorization") String token,@RequestBody StudyEventReq event){
         String userName = jwtUtils.getUserNameFromJwtToken(token.substring(7, token.length()));
         User user = userRepository.findByUsername(userName).get();
-        eventImpl.createEvent(event,user);
+        return eventImpl.createEvent(event,user);
     }
     @GetMapping("/mystudyEvents")
     @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")

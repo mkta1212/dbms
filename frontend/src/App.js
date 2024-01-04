@@ -64,7 +64,7 @@ export default class App extends Component {
     this.state = {
       verified: false,
       user: false,
-      admin: false,
+      provider: false,
       open:false
     };
   }
@@ -76,7 +76,7 @@ export default class App extends Component {
       this.setState({
         verified: true,
         user: user.roles.includes("ROLE_USER"),
-        admin: user.roles.includes("ROLE_ADMIN"),
+        provider: user.roles.includes("ROLE_PROVIDER"),
       });
     }
     
@@ -103,7 +103,7 @@ export default class App extends Component {
     this.setState({
       verified: undefined,
       user: false,
-      admin: false,
+      provider: false,
     });
     window.location.href="/login"
   }
@@ -122,7 +122,7 @@ export default class App extends Component {
     // window.addEventListener('beforeunload',()=>{
     //   if(isTabHidden){
     //     localStorage.removeItem("user")} });
-    const { verified, user, admin, open } = this.state;
+    const { verified, user, provider, open } = this.state;
     return (
     
       <>
@@ -233,7 +233,7 @@ export default class App extends Component {
               </ListItem>
               </>
               ):""}
-              {admin?(
+              {provider?(
                 <>
               <ListItem  disablePadding >
                 <ListItemButton to="/events">
