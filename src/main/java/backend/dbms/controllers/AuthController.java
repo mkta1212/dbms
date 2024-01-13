@@ -1,7 +1,9 @@
 package backend.dbms.controllers;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -33,6 +35,7 @@ import backend.dbms.repository.RoleDao;
 import backend.dbms.repository.UserDao;
 import backend.dbms.security.jwt.JwtUtils;
 import backend.dbms.security.services.UserDetailsImpl;
+import jakarta.servlet.http.Cookie;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
@@ -66,12 +69,12 @@ public class AuthController {
     List<String> roles = userDetails.getAuthorities().stream()
         .map(item -> item.getAuthority())
         .collect(Collectors.toList());
-
-    return ResponseEntity.ok(new JwtResponse(jwt, 
-                         userDetails.getId(), 
-                         userDetails.getUsername(), 
-                         userDetails.getEmail(), 
-                         roles));
+    Cookie jwtCookie = jwtUtils.generateCookie("jwt",jwt);
+    Cookie roleCookie = jwtUtils.generateCookie("roles",roles.toString());
+    HashMap<String, String> res = new HashMap<String, String>();
+    res.put("jwt", jwt);
+    res.put("roles", roles.toString());
+    return ResponseEntity.ok(res);
   }
 
   @PostMapping("/signup")

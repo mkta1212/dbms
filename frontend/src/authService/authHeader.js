@@ -1,8 +1,11 @@
+import Cookies from "universal-cookie";
+
 export default function authHeader() {
-    const user = JSON.parse(localStorage.getItem('user'));
-  
-    if (user && user.accessToken) {
-      return { Authorization: 'Bearer ' + user.accessToken };
+  const cookies = new Cookies(null,{path:"/"})
+   
+
+    if ( cookies.get("jwt") ) {
+      return { Authorization: 'Bearer ' + cookies.get("jwt") };
     } else {
       return {};
     }

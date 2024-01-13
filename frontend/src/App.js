@@ -13,7 +13,7 @@ import MyEvents from "event/myEvent";
 import MyParticipation from "event/myParticipation";
 import BookedClassroom from "createEventService/bookedClassroom";
 import eventBus from './authService/eventBus';
-import AuthVerify from './authService/authVerify';
+import {AuthVerify} from './authService/authVerify';
 import { AppBar, Box, Button, Paper} from '@mui/material';
 import Toolbar from '@mui/material/Toolbar';
 import MenuIcon from '@mui/icons-material/Menu';
@@ -70,13 +70,13 @@ export default class App extends Component {
   }
 
   componentDidMount() {
-    const user = AuthService.getCurrentUser();
-
-    if (user) {
+    const roles = AuthService.getCurrentRoles();
+    console.log(roles)
+    if (roles) {
       this.setState({
         verified: true,
-        user: user.roles.includes("ROLE_USER"),
-        provider: user.roles.includes("ROLE_PROVIDER"),
+        user: roles.includes("ROLE_USER"),
+        provider: roles.includes("ROLE_PROVIDER"),
       });
     }
     

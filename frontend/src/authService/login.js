@@ -39,7 +39,8 @@ export default function Login() {
       if (checkBtn.current.context._errors.length === 0) {
 
             AuthService.login(userName, password)
-            .then(()=> {
+            .then((res)=> {
+              console.log(res)
                 // this.props.history.push("/profile");
                   window.location.href='/'
             },

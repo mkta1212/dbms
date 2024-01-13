@@ -82,7 +82,7 @@ function Row (props) {
         <TableCell align='right'>{event.roomName}</TableCell>
         {/* <TableCell align='right'>{event.max}</TableCell> */}
         {/* <TableCell align='right'><Button onClick={() => { joinEvent(event.eventId) }}>參加活動</Button></TableCell> */}
-        {AuthService.getCurrentUser().roles.includes("ROLE_USER")&&
+        {AuthService.getCurrentRoles().includes("ROLE_USER")&&
         <TableCell align='right'>{btn(event.eventId,event.holderName,myParticipation)}</TableCell>}
       </TableRow>
       <TableRow>
@@ -293,7 +293,7 @@ export default function SearchPage () {
                   <TableCell align='right'>活動日期</TableCell>
                   <TableCell align='right'>活動時段</TableCell>
                   <TableCell align='right'>活動地點</TableCell>
-                  {AuthService.getCurrentUser().roles.includes("ROLE_USER")&&
+                  {AuthService.getCurrentRoles().includes("ROLE_USER")&&
                   <TableCell align='right'></TableCell>}
                   {/* <TableCell align='right' /> */}
                   

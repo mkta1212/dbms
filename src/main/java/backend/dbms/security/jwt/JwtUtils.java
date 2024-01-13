@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 
 import backend.dbms.security.services.UserDetailsImpl;
 import io.jsonwebtoken.*;
+import jakarta.servlet.http.Cookie;
 
 @Component
 public class JwtUtils {
@@ -54,5 +55,11 @@ public class JwtUtils {
     }
 
     return false;
+  }
+
+  public Cookie generateCookie(String name, String value){
+    Cookie cookie = new Cookie(name,value);
+    cookie.setMaxAge(jwtExpirationMs/1000);
+    return cookie;
   }
 }
