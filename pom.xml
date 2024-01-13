@@ -34,6 +34,12 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
+			<exclusions>
+            <exclusion>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-logging</artifactId>
+            </exclusion>
+        </exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -160,6 +166,11 @@
 			<artifactId>mysql-connector-j</artifactId>
 			<scope>runtime</scope>
 		</dependency>
+		<!-- 偷懶使用 Spring Boot 的 log4j2 的 Starter，也可以分別匯入 4 個 dependencies -->
+		<dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-log4j2</artifactId>
+        </dependency>
 	</dependencies>
 	<build>
 		<plugins>
@@ -175,8 +186,8 @@
 					</excludes>
 				</configuration>
 			</plugin>
-		</plugins>
-		<plugin>
+		
+		<!-- <plugin>
 				<groupId>com.mysema.maven</groupId>
 				<artifactId>apt-maven-plugin</artifactId>
 				<version>1.1.3</version>
@@ -198,7 +209,8 @@
 						<version>5.0.0</version>
 					</dependency>
 				</dependencies>
-			</plugin>
+			</plugin> -->
+		</plugins>
 	</build>
 
 </project>

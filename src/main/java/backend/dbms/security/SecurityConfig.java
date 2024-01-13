@@ -78,6 +78,7 @@ public class SecurityConfig {
     .addFilterBefore(authenticationJwtTokenFilter(), BasicAuthenticationFilter.class)
     .authorizeHttpRequests((auth) -> auth
       .requestMatchers("/api/auth/**").permitAll()
+      .requestMatchers("/api/test/**").permitAll()
       .anyRequest().authenticated()
       ).csrf(csrf -> csrf.disable());
     // .requestMatchers("/api/**").hasRole("USER"));
