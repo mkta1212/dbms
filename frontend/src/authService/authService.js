@@ -2,6 +2,7 @@ import axios from "axios";
 import Cookies from "universal-cookie";
 import { jwtExp } from "./authVerify";
 import moment from "moment";
+import FetchData from "./fetchData";
 
 const API_URL = "http://localhost:8080/api/auth/";
 
@@ -15,21 +16,22 @@ const register = (username, email, password) => {
 };
 
 const login = (username, password) => {  
-  return axios
-    .post(API_URL + "signin", {
-      username,
-      password,
-    })
-    .then((response) => {
-      if (response.data.accessToken) {
-        localStorage.setItem("user", JSON.stringify(response.data));
+  // return axios
+  //   .post(API_URL + "signin", {
+  //     username,
+  //     password,
+  //   })
+    return FetchData.postData("api/auth/signin",{username,password})
+    .then((data) => {
+      if (data.accessToken) {
+        localStorage.setItem("user", JSON.stringify(data));
         
       }
       const cookies = new Cookies(null,{path:"/"})
-      const age = jwtExp(response.data.jwt)
-      cookies.set("jwt",response.data.jwt,{expires:new Date(moment(age*1000).format('YYYY-MM-DDTHH:mm'))})
-      cookies.set("roles",response.data.roles,{expires:new Date(age*1000)})
-      return response.data;
+      const age = jwtExp(data.jwt)
+      cookies.set("jwt",data.jwt,{expires:new Date(moment(age*1000).format('YYYY-MM-DDTHH:mm'))})
+      cookies.set("roles",data.roles,{expires:new Date(age*1000)})
+      return data;
     });
 };
 

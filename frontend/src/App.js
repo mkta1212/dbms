@@ -39,6 +39,7 @@ import EditClassroom from "classroom/editClassroom";
 import Users from "admin/user/users";
 import UserEvent from "admin/user/UserEvent";
 import UserParticipation from "admin/user/UserParticipation";
+import Dashboard from "classroom/dashboard";
 
 
 const drawerWidth = 240;
@@ -293,6 +294,7 @@ export default class App extends Component {
                   <Route exact path="/classrooms" element = {<Classrooms />} />
                   <Route exact path="/createClassroom" element = {<CreateClassroom />} />
                   <Route exact path="/editClassroom" element = {<EditClassroom />} />
+                  <Route exact path="/dashboard" element = {<Dashboard />} />
                   <Route exact path="/admin/users" element={<Users/>}/>
                   <Route exact path="/admin/user/studyevent" element={<UserEvent/>}/>
                   <Route exact path="/admin/user/participation" element={<UserParticipation/>}/>
