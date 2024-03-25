@@ -49,7 +49,7 @@ function Row (props) {
           <TableCell align='right'>{classroom.floorNumber}</TableCell>
           <TableCell align='right'>{classroom.roomName}</TableCell>
           <TableCell align='right'>{classroom.capacitySize}</TableCell>
-          <TableCell align='right'><Button onClick={()=>window.location.href="editClassroom?classroomId="+classroom.classroomId}>編輯課程</Button></TableCell>
+          <TableCell align='right'><Button onClick={()=>window.location.href="editClassroom?classroomId="+classroom.classroomId}>編輯教室</Button></TableCell>
           <TableCell align='right'>{deleteBtn(classroom.classroomId)}</TableCell>
         </TableRow>
   

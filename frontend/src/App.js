@@ -139,7 +139,7 @@ export default class App extends Component {
             <MenuIcon />
           </IconButton>
           <Typography variant="h6" noWrap component="div" >
-            I'm in
+            JOINMe
           </Typography>
           {verified?
           // <Box display='flex' justifyContent='right'>

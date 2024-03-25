@@ -77,7 +77,7 @@ export default function EditClassroom (){
           <h2 style={{ color: 'darkblue' }} align='center'>
 
             {' '}
-            創建新活動
+            修改教室資訊
           </h2>
           <Box
             component='form'
@@ -91,7 +91,7 @@ export default function EditClassroom (){
             <div className='col-md-12'>
                 <div className='card'>
                     <h5 className='card-header' align='center'>
-                    課程資訊
+                    教室資訊
                     </h5>
                     <div className='card-body'>
                     <div className='row'>

@@ -33,7 +33,7 @@ export default function Classrooms () {
      axios.get('http://localhost:8080/api/classrooms' ,{ 
       params:{
         page:page,
-        row:20,
+        row:10,
         ...(classroomId!==null&& classroomId && {classroomId:classroomId}),
         ...(roomName!==null&& roomName && {roomName:encodeURI(roomName)}),
         ...(buildingName!==null&& buildingName&& {buildingName:encodeURI(buildingName)}),

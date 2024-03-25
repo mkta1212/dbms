@@ -18,7 +18,7 @@ import backend.dbms.models.Status;
 import backend.dbms.models.User;
 
 @Repository
-public interface ParticipationDao extends JpaRepository<Participation, StudyEvent> {
+public interface ParticipationDao extends JpaRepository<Participation, ParticipationId> {
   List<Participation> findByUser(User user);
   void deleteByUserAndEvent(User user, StudyEvent event);
   long countByEvent(StudyEvent event);

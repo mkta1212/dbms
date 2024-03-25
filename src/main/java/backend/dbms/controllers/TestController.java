@@ -80,12 +80,12 @@ public class TestController {
   }
   @GetMapping("/logCatch/{msg}")
     public String logCatch(@PathVariable(value = "msg") String msg) {
-        //打印因为SLF4J就这5个级别
-        //日志格式具体可以自己调："%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"
+        //SLF4J就这5个级别
+        //日志格式具體可以自己調："%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"
         log.error(" 錯誤訊息，不會影響系統運行");
         log.warn(" 警告訊息，可能會發生系統問題");
-        log.info(" 運作訊息"); //当前我们的log4j2.xml设置的级别
-        log.debug(" 調適訊息，一般在開發中使用，記錄程式變量等等"); //SLF4J默认级别
+        log.info(" 運作訊息"); //當前我们的 log4j2.xml 設置的级别
+        log.debug(" 調適訊息，一般在開發中使用，記錄程式變量等等"); //SLF4J 默認級別
         log.trace(" 追踪訊息，記錄程序所有的流程訊息");
         log.info("打印請求的訊息:{}", msg);
         return "请求成功！！";
