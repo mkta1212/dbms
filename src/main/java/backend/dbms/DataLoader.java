@@ -74,7 +74,7 @@ public class DataLoader implements CommandLineRunner {
         
         Random r = new Random();
         if (userImpl.count() == 0) {
-            for(int i=0; i<=3000; i++){
+            for(int i=0; i<=300; i++){
                 String name = Integer.toString(r.nextInt(999999-100000+1)+100000);
                 if(!userImpl.existsByUsername(name)){
                     User user = new User(name, name+"@gmail.com", encoder.encode(name));

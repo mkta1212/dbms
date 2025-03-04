@@ -1,0 +1,16 @@
+services:
+  database:
+    image: mysql
+    container_name: dbms_mysql
+    ports:
+      - 3306:3306
+    environment:
+      - MYSQL_USER=user
+      - MYSQL_PASSWORD=123456
+      - MYSQL_DATABASE=dbms
+      - MYSQL_ROOT_PASSWORD=my-secret-pw
+    volumes:
+      - dbms_mysql_data:/var/lib/mysql
+
+volumes:
+  dbms_mysql_data:
